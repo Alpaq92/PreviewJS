@@ -11,6 +11,7 @@
     "docs": "jsdoc src -r -d docs"
   },
   "dependencies": {
+    "jszip": "^3.10.1",
     "mammoth": "^1.8.0",
     "pdfjs-dist": "^4.9.155",
     "rtf.js": "^2.2.0"
