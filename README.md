@@ -4,6 +4,8 @@ A browser-based document viewer that renders **PDF, ODF, RTF, DOC, and DOCX** fi
 
 **[Live Demo →](https://alpaq92.github.io/PreviewJS/)**
 
+![DOCX viewer screenshot](gallery/docx-viewer.png)
+
 ---
 
 ## Supported Formats
@@ -54,6 +56,10 @@ PreviewJS is built on these open-source libraries:
 | [dolanmiu/docx](https://github.com/dolanmiu/docx) | dolanmiu | Reference |
 | [webodf/WebODF](https://github.com/webodf/WebODF) | webodf | Reference |
 | [tbluemel/rtf.js](https://github.com/tbluemel/rtf.js) | tbluemel | Reference |
+
+## Gallery
+
+Screenshots are in the [`gallery/`](gallery/) folder.
 
 ## License
 
