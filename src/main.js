@@ -8,6 +8,7 @@ const EXT_MAP = {
   odt: 'odf', ods: 'odf', odp: 'odf', odg: 'odf', odm: 'odf', odf: 'odf',
   rtf: 'rtf',
   docx: 'docx',
+  doc: 'docx',   // mammoth handles legacy .doc (best-effort)
 }
 
 class DocumentViewer {

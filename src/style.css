@@ -242,7 +242,7 @@ html, body {
   overflow: auto;
   background: #525659;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 20px;
   min-height: 0;
@@ -253,13 +253,14 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  min-height: 380px;
+  width: min(90%, 620px);
+  min-height: 360px;
   border: 2px dashed #666;
   border-radius: 10px;
   cursor: pointer;
   transition: border-color .2s, background .2s;
   align-self: center;
+  flex-shrink: 0;
 }
 #dropzone.drag-over {
   border-color: #90caf9;
@@ -325,6 +326,7 @@ html, body {
   gap: 14px;
   width: 100%;
   padding-bottom: 40px;
+  align-self: flex-start;  /* don't vertically center pages — stack from top */
 }
 
 /* ── PDF pages ──────────────────────────────────────────────────────────── */
