@@ -1,0 +1,15 @@
+[submodule "submodules/pdf.js"]
+	path = submodules/pdf.js
+	url = https://github.com/mozilla/pdf.js
+[submodule "submodules/JSDoc"]
+	path = submodules/JSDoc
+	url = https://github.com/Alpaq92/JSDoc
+[submodule "submodules/docx"]
+	path = submodules/docx
+	url = https://github.com/dolanmiu/docx
+[submodule "submodules/WebODF"]
+	path = submodules/WebODF
+	url = https://github.com/webodf/WebODF
+[submodule "submodules/rtf.js"]
+	path = submodules/rtf.js
+	url = https://github.com/tbluemel/rtf.js

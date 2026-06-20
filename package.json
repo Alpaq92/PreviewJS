@@ -1,0 +1,21 @@
+{
+  "name": "preview-js",
+  "version": "1.0.0",
+  "description": "Universal document viewer: PDF, ODF, RTF, DOCX — powered by pdf.js, WebODF, rtf.js and docx submodules",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "submodules:init": "git submodule update --init --recursive",
+    "docs": "jsdoc src -r -d docs"
+  },
+  "dependencies": {
+    "mammoth": "^1.8.0",
+    "pdfjs-dist": "^4.9.155",
+    "rtf.js": "^2.2.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.7"
+  }
+}

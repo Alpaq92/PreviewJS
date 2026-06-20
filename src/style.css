@@ -1,0 +1,434 @@
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  background: #525659;
+  color: #fff;
+}
+
+/* ── Outer layout ───────────────────────────────────────────────────────── */
+#outerContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────────── */
+#sidebarContainer {
+  width: 0;
+  min-width: 0;
+  background: #3a3a3a;
+  border-right: 1px solid #111;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.25s ease;
+  flex-shrink: 0;
+}
+
+#outerContainer.sidebar-open #sidebarContainer { width: 200px; }
+
+#sidebarToolbar {
+  display: flex;
+  background: #2e2e2e;
+  border-bottom: 1px solid #111;
+  flex-shrink: 0;
+}
+
+.sidebar-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.sidebar-tab:hover   { color: #fff; background: #444; }
+.sidebar-tab.active  { color: #90caf9; border-bottom: 2px solid #90caf9; }
+
+#sidebarContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Thumbnails */
+.thumb {
+  cursor: pointer;
+  text-align: center;
+  margin-bottom: 10px;
+  opacity: 0.65;
+  transition: opacity 0.15s;
+}
+.thumb:hover, .thumb.active { opacity: 1; }
+.thumb canvas {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  box-shadow: 0 1px 4px rgba(0,0,0,.5);
+}
+.thumb-label {
+  color: #aaa;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+/* ── Main container ─────────────────────────────────────────────────────── */
+#mainContainer {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────────────────── */
+#toolbarContainer {
+  background: #474747;
+  border-bottom: 1px solid #1a1a1a;
+  box-shadow: 0 2px 5px rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  gap: 4px;
+  flex-shrink: 0;
+  min-height: 42px;
+  z-index: 10;
+}
+
+#toolbarLeft  { display: flex; align-items: center; gap: 4px; }
+#toolbarMiddle { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; }
+#toolbarRight { display: flex; align-items: center; gap: 4px; }
+
+.toolbar-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px 6px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  transition: background 0.1s;
+  user-select: none;
+}
+.toolbar-btn:hover:not(:disabled) { background: #666; }
+.toolbar-btn:active:not(:disabled) { background: #555; }
+.toolbar-btn:disabled { opacity: 0.35; cursor: default; }
+
+.toolbar-separator {
+  width: 1px;
+  height: 22px;
+  background: #666;
+  margin: 0 3px;
+  flex-shrink: 0;
+}
+
+/* Page number group */
+#pageNumberGroup {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ddd;
+  font-size: 13px;
+}
+
+#pageNumber {
+  width: 48px;
+  padding: 3px 5px;
+  background: #636363;
+  border: 1px solid #3a3a3a;
+  border-radius: 3px;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  -moz-appearance: textfield;
+}
+#pageNumber::-webkit-inner-spin-button,
+#pageNumber::-webkit-outer-spin-button { -webkit-appearance: none; }
+#pageNumber:focus { outline: none; border-color: #90caf9; }
+
+.page-sep { color: #888; }
+
+/* Zoom */
+#scaleSelect {
+  background: #636363;
+  border: 1px solid #3a3a3a;
+  border-radius: 3px;
+  color: #fff;
+  padding: 3px 5px;
+  font-size: 12px;
+  cursor: pointer;
+  max-width: 110px;
+}
+#scaleSelect:focus { outline: none; }
+
+/* Format badge */
+#formatBadge {
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+#formatBadge.badge-pdf  { background: #e53935; color: #fff; }
+#formatBadge.badge-odf  { background: #43a047; color: #fff; }
+#formatBadge.badge-rtf  { background: #1e88e5; color: #fff; }
+#formatBadge.badge-docx { background: #5e35b1; color: #fff; }
+
+/* File input — hidden, triggered by label */
+#fileInput { display: none; }
+
+/* ── Loading bar ────────────────────────────────────────────────────────── */
+#loadingBar {
+  height: 3px;
+  background: #3a3a3a;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+#loadingBarProgress {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #90caf9 0%, #42a5f5 50%, #90caf9 100%);
+  background-size: 200% 100%;
+  animation: loading-sweep 1.4s linear infinite;
+}
+@keyframes loading-sweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Error bar ──────────────────────────────────────────────────────────── */
+#errorBar {
+  background: #b71c1c;
+  color: #fff;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+#errorBar span { flex: 1; }
+#errorClose {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+#errorClose:hover { background: rgba(255,255,255,.15); }
+
+/* ── Viewer container ───────────────────────────────────────────────────── */
+#viewerContainer {
+  flex: 1;
+  overflow: auto;
+  background: #525659;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  min-height: 0;
+}
+
+/* ── Drop zone ──────────────────────────────────────────────────────────── */
+#dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 380px;
+  border: 2px dashed #666;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  align-self: center;
+}
+#dropzone.drag-over {
+  border-color: #90caf9;
+  background: rgba(144,202,249,.07);
+}
+
+#dropzoneContent {
+  text-align: center;
+  padding: 40px 24px;
+  color: #aaa;
+  pointer-events: none;
+}
+#dropzoneContent label { pointer-events: auto; }
+
+#dropzoneIcon { margin-bottom: 16px; }
+
+#dropzoneContent h2 {
+  font-size: 22px;
+  font-weight: 300;
+  color: #ddd;
+  margin-bottom: 8px;
+}
+#dropzoneContent p { font-size: 14px; }
+#dropzoneContent label {
+  color: #90caf9;
+  cursor: pointer;
+  text-decoration: underline;
+  pointer-events: all;
+}
+
+.format-tags {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.format-tag {
+  padding: 3px 11px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.tag-pdf  { background: #e53935; color: #fff; }
+.tag-odf  { background: #43a047; color: #fff; }
+.tag-rtf  { background: #1e88e5; color: #fff; }
+.tag-docx { background: #5e35b1; color: #fff; }
+
+.powered-by {
+  margin-top: 22px;
+  font-size: 11px;
+  color: #666;
+}
+.powered-by a { color: #777; }
+.powered-by a:hover { color: #aaa; }
+
+/* ── Document container ─────────────────────────────────────────────────── */
+#docContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding-bottom: 40px;
+}
+
+/* ── PDF pages ──────────────────────────────────────────────────────────── */
+.pdf-page {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  flex-shrink: 0;
+  position: relative;
+  line-height: 0;
+}
+.pdf-page canvas { display: block; }
+
+/* ── HTML document pages (RTF, DOCX) ───────────────────────────────────── */
+.doc-page {
+  background: #fff;
+  color: #000;
+  width: 816px;       /* ~8.5 in at 96 dpi */
+  min-height: 1056px; /* ~11 in at 96 dpi */
+  padding: 82px 90px; /* ~0.85 in margins */
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  font-size: 12pt;
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+.doc-page img { max-width: 100%; height: auto; }
+.doc-page table { border-collapse: collapse; max-width: 100%; }
+.doc-page td, .doc-page th { border: 1px solid #ccc; padding: 4px 8px; }
+.doc-page h1,h2,h3,h4,h5,h6 { line-height: 1.3; margin: .8em 0 .4em; }
+.doc-page p { margin-bottom: .6em; }
+
+/* ── ODF iframe wrapper ─────────────────────────────────────────────────── */
+.odf-frame {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  width: 816px;
+  height: 1056px;
+  border: none;
+  display: block;
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Print layer ────────────────────────────────────────────────────────── */
+#printLayer { display: none; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRINT STYLES
+═══════════════════════════════════════════════════════════════════════════ */
+@media print {
+  html, body {
+    background: #fff;
+    overflow: visible;
+    height: auto;
+  }
+
+  #outerContainer { display: block; height: auto; }
+  #sidebarContainer,
+  #toolbarContainer,
+  #loadingBar,
+  #errorBar,
+  #dropzone        { display: none !important; }
+
+  #mainContainer   { display: block; }
+  #viewerContainer { background: #fff; padding: 0; display: block; overflow: visible; }
+  #docContainer    { gap: 0; padding: 0; }
+
+  /* PDF pages */
+  .pdf-page {
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+    margin: 0;
+  }
+
+  /* HTML pages */
+  .doc-page {
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+    margin: 0;
+    width: 100%;
+    min-height: auto;
+  }
+
+  /* ODF iframe */
+  .odf-frame {
+    box-shadow: none;
+    width: 100%;
+    height: 100vh;
+  }
+
+  /* PDF print layer takes over */
+  #printLayer {
+    display: block;
+  }
+  #printLayer .print-page {
+    display: block;
+    width: 100%;
+    height: auto;
+    page-break-after: always;
+    break-after: page;
+  }
+  /* Hide regular PDF canvases when printing via print layer */
+  body.pdf-printing #docContainer { display: none; }
+}
