@@ -143,19 +143,19 @@ html, body {
   gap: 5px;
   color: #ddd;
   font-size: 13px;
+  line-height: 1;
 }
 
 #pageNumber {
   width: 48px;
-  height: 24px;
-  padding: 0 5px;
+  padding: 3px 5px;
   background: #636363;
   border: 1px solid #3a3a3a;
   border-radius: 3px;
   color: #fff;
   text-align: center;
   font-size: 13px;
-  line-height: 24px;
+  line-height: 1;
   -moz-appearance: textfield;
 }
 #pageNumber::-webkit-inner-spin-button,
