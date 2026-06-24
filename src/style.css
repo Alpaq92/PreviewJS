@@ -136,34 +136,46 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Page number group */
+/* Page number group — unified pill */
 #pageNumberGroup {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: stretch;
+  background: #525252;
+  border: 1px solid #3a3a3a;
+  border-radius: 3px;
+  overflow: hidden;
   color: #ddd;
   font-size: 13px;
-  line-height: 1;
 }
 
 #pageNumber {
-  width: 48px;
-  height: 16px;
-  padding: 0 5px;
+  width: 44px;
+  padding: 0 4px;
   background: #636363;
-  border: 1px solid #3a3a3a;
-  border-radius: 3px;
+  border: none;
+  border-right: 1px solid #3a3a3a;
+  border-radius: 0;
   color: #fff;
   text-align: center;
   font-size: 13px;
-  line-height: 1;
   -moz-appearance: textfield;
 }
 #pageNumber::-webkit-inner-spin-button,
 #pageNumber::-webkit-outer-spin-button { -webkit-appearance: none; }
-#pageNumber:focus { outline: none; border-color: #90caf9; }
+#pageNumber:focus { outline: none; box-shadow: 0 0 0 1px #90caf9 inset; }
 
-.page-sep { color: #888; }
+.page-sep {
+  display: flex;
+  align-items: center;
+  padding: 0 3px 0 5px;
+  color: #888;
+}
+
+#totalPages {
+  display: flex;
+  align-items: center;
+  padding: 0 5px 0 2px;
+}
 
 /* Zoom */
 #scaleSelect {
