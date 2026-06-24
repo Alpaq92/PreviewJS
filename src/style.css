@@ -147,11 +147,11 @@ html, body {
 
 #pageNumber {
   width: 48px;
-  padding: 3px 5px;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #777;
-  border-radius: 0;
+  height: 17px;
+  padding: 0 5px;
+  background: #636363;
+  border: 1px solid #3a3a3a;
+  border-radius: 3px;
   color: #fff;
   text-align: center;
   font-size: 13px;
@@ -159,7 +159,7 @@ html, body {
 }
 #pageNumber::-webkit-inner-spin-button,
 #pageNumber::-webkit-outer-spin-button { -webkit-appearance: none; }
-#pageNumber:focus { outline: none; border-bottom-color: #90caf9; }
+#pageNumber:focus { outline: none; border-color: #90caf9; }
 
 .page-sep { color: #888; }
 
