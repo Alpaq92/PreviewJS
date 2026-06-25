@@ -124,6 +124,10 @@ export class DocumentViewer {
 
     // Sidebar
     document.getElementById('sidebarToggle').addEventListener('click', () => this._toggleSidebar())
+    // Double-click the sidebar header ("Pages") to close the thumbnail sidebar.
+    document.getElementById('sidebarToolbar')?.addEventListener('dblclick', () => {
+      document.getElementById('outerContainer').classList.remove('sidebar-open')
+    })
 
     // Error bar
     document.getElementById('errorClose').addEventListener('click', () => {
