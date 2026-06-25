@@ -53,6 +53,7 @@ ReaderJS is built on these open-source libraries:
 | **[libarchive.js](https://github.com/nika-begiashvili/libarchivejs)** | Nika Begiashvili | CBR/CBT (RAR/TAR) extraction via a WASM build of libarchive — uses libarchive's own BSD-licensed RAR decoder, no UnRAR code |
 | **[foliate-js](https://github.com/johnfactotum/foliate-js)** | John Factotum | EPUB / MOBI / KF8 (AZW3) parsing and paginated rendering |
 | **[Vite](https://github.com/vitejs/vite)** | Evan You / Vite contributors | Build tooling and development server |
+| **[Material Design Icons](https://pictogrammers.com/library/mdi/)** | Pictogrammers | UI icons (Apache-2.0) |
 
 ### Submodules (reference / bundled)
 
