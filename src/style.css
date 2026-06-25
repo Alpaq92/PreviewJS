@@ -201,9 +201,9 @@ html, body {
 }
 /* The scale dropdown holds longer localized labels (e.g. PL "Dopasuj wysokość",
    RU "По размеру страницы"); give it room so the selected value isn't clipped.
-   A native <select> still sizes to its widest option, so short-label languages
-   (English etc.) stay compact — this is only a ceiling. */
-#scaleSelect { max-width: 160px; }
+   min-width guarantees comfortable slack (not an exact hug of the text), and
+   max-width lets the longest labels grow while keeping it from getting silly. */
+#scaleSelect { min-width: 140px; max-width: 170px; }
 #scaleSelect:focus, #langSelect:focus { outline: none; }
 
 /* Format badge */
