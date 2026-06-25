@@ -452,22 +452,19 @@ html, body {
   color: #d6d9de;
   width: 100%;
   min-height: 100%;
-  border: 1px solid #1a1b1e;
-  border-radius: 6px;
-  box-shadow: 0 2px 12px rgba(0,0,0,.5);
   align-self: stretch;
   display: flex;
   flex-direction: column;
 }
-/* compare mode: stretch docContainer so the diff fills the viewer area */
-#docContainer.is-compare { align-self: stretch; padding-bottom: 0; }
+/* compare mode: full-bleed — drop the viewer padding and stretch docContainer */
+#viewerContainer.is-compare { padding: 0; }
+#viewerContainer.is-compare #docContainer { align-self: stretch; padding-bottom: 0; }
 .diff-mode-toggle {
   display: flex;
   gap: 4px;
   padding: 7px 10px;
   background: #34363b;
   border-bottom: 1px solid #1f2023;
-  border-radius: 6px 6px 0 0;
   position: sticky;
   top: 0;
   z-index: 3;
