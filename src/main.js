@@ -7,6 +7,7 @@ import { MDRenderer   } from './renderers/md-renderer.js'
 import { TXTRenderer  } from './renderers/txt-renderer.js'
 import { ComicRenderer } from './renderers/comic-renderer.js'
 import { EPUBRenderer } from './renderers/epub-renderer.js'
+import { ImageRenderer } from './renderers/image-renderer.js'
 import { t, applyTranslations, setLang, getLang } from './i18n.js'
 
 const EXT_MAP = {
@@ -17,8 +18,11 @@ const EXT_MAP = {
   doc: 'doc',
   md: 'md', markdown: 'md',
   txt: 'txt', text: 'txt', log: 'txt',
+  png: 'image', jpg: 'image', jpeg: 'image', gif: 'image', webp: 'image',
+  avif: 'image', bmp: 'image', svg: 'image', ico: 'image', tif: 'image', tiff: 'image',
   cbz: 'comic', cbr: 'comic', cbt: 'comic',
   epub: 'epub', mobi: 'epub', azw3: 'epub', azw: 'epub', kf8: 'epub',
+  fb2: 'epub', fbz: 'epub',
 }
 
 class DocumentViewer {
@@ -33,6 +37,7 @@ class DocumentViewer {
       txt:  new TXTRenderer(),
       comic: new ComicRenderer(),
       epub: new EPUBRenderer(),
+      image: new ImageRenderer(),
     }
     this.activeRenderer = null
     this.currentPage    = 1

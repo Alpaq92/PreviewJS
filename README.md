@@ -1,6 +1,6 @@
 # ReaderJS — Universal Document Viewer
 
-A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, Markdown, plain text, comic-book archives, and e-books (EPUB/MOBI)** natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
+A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, Markdown, plain text, images, comic-book archives, and e-books (EPUB/MOBI)** natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
 
 To give it a try without installing anything, visit the [live demo](https://alpaq92.github.io/ReaderJS/).
 
@@ -19,8 +19,9 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 | Word Open XML | `.docx` | mammoth.js |
 | Markdown | `.md` `.markdown` | marked |
 | Plain text | `.txt` `.text` `.log` | native |
+| Image (+ EXIF) | `.png` `.jpg` `.gif` `.webp` `.avif` `.bmp` `.svg` `.tiff` | native + UTIF.js (TIFF) + exifr (EXIF) |
 | Comic Book Archive | `.cbz` `.cbr` `.cbt` | JSZip (CBZ) + libarchive.js (CBR/CBT) |
-| E-book | `.epub` `.mobi` `.azw3` | foliate-js |
+| E-book | `.epub` `.mobi` `.azw3` `.fb2` | foliate-js |
 
 ## Features
 
@@ -52,7 +53,9 @@ ReaderJS is built on these open-source libraries:
 | **[jQuery](https://github.com/jquery/jquery)** | OpenJS Foundation | DOM utility required internally by RTF.js |
 | **[marked](https://github.com/markedjs/marked)** | Christopher Jeffrey et al. | Markdown → HTML parsing and rendering |
 | **[libarchive.js](https://github.com/nika-begiashvili/libarchivejs)** | Nika Begiashvili | CBR/CBT (RAR/TAR) extraction via a WASM build of libarchive — uses libarchive's own BSD-licensed RAR decoder, no UnRAR code |
-| **[foliate-js](https://github.com/johnfactotum/foliate-js)** | John Factotum | EPUB / MOBI / KF8 (AZW3) parsing and paginated rendering |
+| **[foliate-js](https://github.com/johnfactotum/foliate-js)** | John Factotum | EPUB / MOBI / KF8 (AZW3) / FB2 parsing and paginated rendering |
+| **[UTIF.js](https://github.com/photopea/UTIF.js)** | Photopea | TIFF image decoding |
+| **[exifr](https://github.com/MikeKovarik/exifr)** | Mike Kovarik | EXIF / GPS metadata parsing for images |
 | **[Vite](https://github.com/vitejs/vite)** | Evan You / Vite contributors | Build tooling and development server |
 | **[Material Design Icons](https://pictogrammers.com/library/mdi/)** | Pictogrammers | UI icons (Apache-2.0) |
 
