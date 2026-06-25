@@ -4,6 +4,7 @@ import { RTFRenderer  } from './renderers/rtf-renderer.js'
 import { DOCXRenderer } from './renderers/docx-renderer.js'
 import { DOCRenderer  } from './renderers/doc-renderer.js'
 import { MDRenderer   } from './renderers/md-renderer.js'
+import { ComicRenderer } from './renderers/comic-renderer.js'
 
 const EXT_MAP = {
   pdf: 'pdf',
@@ -12,6 +13,7 @@ const EXT_MAP = {
   docx: 'docx',
   doc: 'doc',
   md: 'md', markdown: 'md',
+  cbz: 'comic', cbr: 'comic', cbt: 'comic',
 }
 
 class DocumentViewer {
@@ -23,6 +25,7 @@ class DocumentViewer {
       docx: new DOCXRenderer(),
       doc:  new DOCRenderer(),
       md:   new MDRenderer(),
+      comic: new ComicRenderer(),
     }
     this.activeRenderer = null
     this.currentPage    = 1
