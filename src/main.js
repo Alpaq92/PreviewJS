@@ -317,15 +317,28 @@ export class DocumentViewer {
       const page = document.createElement('div')
       page.className = 'diff-page'
       container.appendChild(page)
-      document.getElementById('viewerContainer').classList.add('is-compare')   // full-bleed diff
+      document.getElementById('mainContainer').classList.add('is-compare')   // full-bleed diff + flat toolbar
+
+      // \f from the extractors separates document pages → compare page-by-page.
+      const aPages = (a.text ?? '').split('\f')
+      const bPages = (b.text ?? '').split('\f')
+      const pageCount = Math.max(aPages.length, bPages.length)
+      const pages = []
+      for (let i = 0; i < pageCount; i++) pages.push({ leftText: aPages[i] ?? '', rightText: bPages[i] ?? '' })
 
       const { renderCompare } = await import('./diff-view.js')
       this._compareCtl = renderCompare(page, {
-        leftText: a.text, rightText: b.text,
-        blame: opts.blame || {}, mode: opts.mode || 'side-by-side',
+        pages, blame: opts.blame || {}, mode: opts.mode || 'side-by-side',
       })
 
-      this.numPages = 1; this.currentPage = 1
+      // drive the view mode from the top-toolbar dropdown (shown via .is-compare)
+      const modeSel = document.getElementById('compareModeSelect')
+      if (modeSel) {
+        modeSel.value = opts.mode || 'side-by-side'
+        modeSel.onchange = () => this._compareCtl?.setMode(modeSel.value)
+      }
+
+      this.numPages = pageCount; this.currentPage = 1
       this.updatePageInfo()
       const badge = document.getElementById('formatBadge')
       badge.textContent = t('compare.badge')
@@ -347,7 +360,9 @@ export class DocumentViewer {
   _clearCompare() {
     this._compareCtl?.destroy()
     this._compareCtl = null
-    document.getElementById('viewerContainer')?.classList.remove('is-compare')
+    document.getElementById('mainContainer')?.classList.remove('is-compare')
+    const modeSel = document.getElementById('compareModeSelect')
+    if (modeSel) modeSel.onchange = null
   }
 
   /* ── Page navigation ─────────────────────────────────────────────────── */
@@ -356,10 +371,15 @@ export class DocumentViewer {
   }
 
   goToPage(page) {
-    if (!this.activeRenderer) return
+    if (!this.activeRenderer && !this._compareCtl) return
     page = Math.max(1, Math.min(this.numPages, page))
     this.currentPage = page
-    this.activeRenderer.scrollToPage(page)
+    if (this._compareCtl) {
+      this._compareCtl.setPage(page - 1)                       // compare pages are 0-based
+      document.getElementById('viewerContainer').scrollTop = 0  // show the top of the new page
+    } else {
+      this.activeRenderer.scrollToPage(page)
+    }
     this.updatePageInfo()
   }
 

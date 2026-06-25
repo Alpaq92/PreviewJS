@@ -29,6 +29,7 @@ dependencies** in anything that ships.
 | [exifr](https://github.com/MikeKovarik/exifr) | MIT | EXIF/GPS metadata |
 | [Vite](https://github.com/vitejs/vite) | MIT | build tooling |
 | [Material Design Icons](https://pictogrammers.com/library/mdi/) | Apache-2.0 | UI icons |
+| [Open-Color](https://github.com/yeun/open-color) | MIT | compare/diff view colour palette |
 
 ## Not shipped
 

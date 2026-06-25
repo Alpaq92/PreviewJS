@@ -166,25 +166,21 @@ const RENDERERS = { 'side-by-side': renderSideBySide, unified: renderUnified, in
 
 /* ── Public entry ──────────────────────────────────────────────────────────── */
 
-export function renderCompare(target, { leftText, rightText, blame = {}, mode = 'side-by-side' } = {}) {
-  const rows = buildRows(leftText, rightText)
+export function renderCompare(target, { pages = [], blame = {}, mode = 'side-by-side' } = {}) {
+  // `pages`: one { leftText, rightText } per document page. Most formats are a
+  // single page; PDF/DjVu split per page so the diff can be navigated page by page.
+  if (!pages.length) pages = [{ leftText: '', rightText: '' }]
+  const rowsCache = new Map()
+  const rowsFor = i => { if (!rowsCache.has(i)) rowsCache.set(i, buildRows(pages[i].leftText, pages[i].rightText)); return rowsCache.get(i) }
+  let pageIdx = 0
   target.innerHTML = ''
   target.classList.add('diff-view')
 
-  // mode toggle (segmented control)
-  const toggle = document.createElement('div')
-  toggle.className = 'diff-mode-toggle'
-  const btns = {}
-  for (const [m, key] of [['side-by-side', 'compare.modeSideBySide'], ['unified', 'compare.modeUnified'], ['inline', 'compare.modeInline']]) {
-    const b = document.createElement('button')
-    b.className = 'diff-mode-btn'; b.dataset.mode = m; b.dataset.i18n = key; b.textContent = t(key)
-    b.addEventListener('click', () => setMode(m))
-    toggle.appendChild(b); btns[m] = b
-  }
-
+  // The view-mode switcher is a dropdown in the host's top toolbar (the app and
+  // the embed both wire it to setMode); the diff itself is just the body.
   const bodyWrap = document.createElement('div')   // position:relative anchor for tooltips/pins
   bodyWrap.className = 'diff-body'
-  target.append(toggle, bodyWrap)
+  target.appendChild(bodyWrap)
 
   // transient hover tooltip (with a pin button) + persistent pins
   const tip = document.createElement('div'); tip.className = 'diff-tooltip hidden'
@@ -257,15 +253,17 @@ export function renderCompare(target, { leftText, rightText, blame = {}, mode = 
     [...bodyWrap.children].forEach(c => { if (c !== tip) c.remove() })
     pins.splice(0).forEach(p => p.remove())   // re-render invalidates anchors
     hideTip()
-    RENDERERS[current](bodyWrap, rows)
-    for (const m in btns) btns[m].classList.toggle('active', m === current)
+    RENDERERS[current](bodyWrap, rowsFor(pageIdx))
   }
   function setMode(m) { if (RENDERERS[m]) { current = m; render() } }
+  function setPage(i) { if (i >= 0 && i < pages.length && i !== pageIdx) { pageIdx = i; render() } }
 
   render()
 
   return {
     setMode,
+    setPage,
+    pageCount: pages.length,
     destroy() {
       pins.splice(0).forEach(p => p.remove())
       tip.remove()

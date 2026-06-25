@@ -1,6 +1,26 @@
 /* ── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Open-Color palette (https://yeun.github.io/open-color/, MIT) ──────────
+   The subset used by the compare/diff view, so it stays on a principled scale
+   and reads as part of the app's dark-gray + blue-accent chrome. */
+:root {
+  --oc-gray-3:  #dee2e6;
+  --oc-gray-5:  #adb5bd;
+  --oc-gray-6:  #868e96;
+  --oc-gray-8:  #343a40;
+  --oc-gray-9:  #212529;
+  --oc-red-1:   #ffe3e3;
+  --oc-red-6:   #fa5252;  --oc-red-6-rgb:   250, 82, 82;
+  --oc-green-1: #d3f9d8;
+  --oc-green-6: #40c057;  --oc-green-6-rgb: 64, 192, 87;
+  --oc-blue-3:  #74c0fc;
+  --oc-indigo-6: #4c6ef5;
+
+  /* app chrome — shared so the diff toolbar matches the main toolbar exactly */
+  --toolbar-bg: #474747;
+}
+
 /* ── Scrollbars — slim, dark, to match the app chrome ──────────────────── */
 * { scrollbar-width: thin; scrollbar-color: #5e5e5e transparent; }
 ::-webkit-scrollbar { width: 11px; height: 11px; }
@@ -109,7 +129,7 @@ html, body {
 
 /* ── Toolbar ────────────────────────────────────────────────────────────── */
 #toolbarContainer {
-  background: #474747;
+  background: var(--toolbar-bg);
   border-bottom: 1px solid #1a1a1a;
   box-shadow: 0 2px 5px rgba(0,0,0,.45);
   display: flex;
@@ -172,6 +192,8 @@ html, body {
   color: #fff;
   text-align: center;
   font-size: 13px;
+  line-height: 19px;      /* center the digit in the 19px content box (21px - 2px border) */
+  font-family: inherit;   /* match the toolbar text — UA default is Arial, which sits off the baseline */
   -moz-appearance: textfield;
 }
 #pageNumber::-webkit-inner-spin-button,
@@ -181,7 +203,7 @@ html, body {
 .page-sep { color: #888; }
 
 /* Zoom */
-#scaleSelect, #langSelect {
+#scaleSelect, #langSelect, #compareModeSelect {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -204,6 +226,7 @@ html, body {
    min-width guarantees comfortable slack (not an exact hug of the text), and
    max-width lets the longest labels grow while keeping it from getting silly. */
 #scaleSelect { min-width: 140px; max-width: 170px; }
+#compareModeSelect { min-width: 132px; max-width: 180px; }
 #scaleSelect:focus, #langSelect:focus { outline: none; }
 
 /* Format badge */
@@ -446,41 +469,27 @@ html, body {
 .image-info dt { color: #666; }
 .image-info dd { color: #111; word-break: break-word; }
 
-/* ── Compare / diff view (dark, matches the app chrome) ────────────────── */
+/* ── Compare / diff view — Open-Color palette, aligned to the app chrome ── */
 .diff-page {
-  background: #2b2d31;
-  color: #d6d9de;
+  background: var(--oc-gray-9);
+  color: var(--oc-gray-3);
   width: 100%;
   min-height: 100%;
   align-self: stretch;
   display: flex;
   flex-direction: column;
 }
-/* compare mode: full-bleed — drop the viewer padding and stretch docContainer */
-#viewerContainer.is-compare { padding: 0; }
-#viewerContainer.is-compare #docContainer { align-self: stretch; padding-bottom: 0; }
-.diff-mode-toggle {
-  display: flex;
-  gap: 4px;
-  padding: 7px 10px;
-  background: #34363b;
-  border-bottom: 1px solid #1f2023;
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-.diff-mode-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  padding: 4px 12px;
-  font-size: 12px;
-  color: #aab1ba;
-  cursor: pointer;
-  transition: background 0.1s, color 0.1s;
-}
-.diff-mode-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
-.diff-mode-btn.active { background: #2b2d31; color: #90caf9; border-color: #90caf9; font-weight: 600; }
+/* compare mode: full-bleed — flatten the toolbar's drop shadow, drop the viewer
+   padding, and stretch docContainer so the diff meets the toolbar cleanly */
+#mainContainer.is-compare #toolbarContainer { box-shadow: none; }
+#mainContainer.is-compare #viewerContainer { padding: 0; }
+#mainContainer.is-compare #docContainer { align-self: stretch; padding-bottom: 0; }
+/* compare mode swaps the inert zoom controls for the view-mode dropdown */
+.compare-only { display: none; }
+#mainContainer.is-compare #zoomOut,
+#mainContainer.is-compare #scaleSelect,
+#mainContainer.is-compare #zoomIn { display: none; }
+#mainContainer.is-compare .compare-only { display: inline-block; }
 
 .diff-body { position: relative; flex: 1 1 auto; }
 .diff-rows { font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; }
@@ -491,38 +500,38 @@ html, body {
 .diff-cell:nth-child(odd) { border-right: 1px solid rgba(255,255,255,.07); }
 .diff-lineno {
   flex: 0 0 46px; text-align: right; padding: 1px 8px;
-  color: #6c7077; background: rgba(0,0,0,.18); user-select: none; border-right: 1px solid rgba(255,255,255,.05);
+  color: var(--oc-gray-6); background: rgba(0,0,0,.22); user-select: none; border-right: 1px solid rgba(255,255,255,.05);
 }
 .diff-text { flex: 1; padding: 1px 9px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .diff-cell.equal { background: transparent; }
-.diff-cell.del   { background: rgba(248,81,73,.13); }
-.diff-cell.add   { background: rgba(46,160,67,.15); }
-.diff-cell.blank { background: rgba(0,0,0,.13); }
+.diff-cell.del   { background: rgba(var(--oc-red-6-rgb), .15); }
+.diff-cell.add   { background: rgba(var(--oc-green-6-rgb), .16); }
+.diff-cell.blank { background: rgba(0,0,0,.16); }
 
 /* unified: single column with old/new gutters + sign */
 .diff-rows.unified .diff-line { display: flex; min-height: 1.55em; border-bottom: 1px solid rgba(255,255,255,.03); }
 .diff-rows.unified .diff-lineno { flex: 0 0 40px; }
-.diff-rows.unified .diff-sign { flex: 0 0 18px; text-align: center; color: #7a7f87; user-select: none; }
-.diff-rows.unified .diff-line.del { background: rgba(248,81,73,.13); }
-.diff-rows.unified .diff-line.add { background: rgba(46,160,67,.15); }
+.diff-rows.unified .diff-sign { flex: 0 0 18px; text-align: center; color: var(--oc-gray-6); user-select: none; }
+.diff-rows.unified .diff-line.del { background: rgba(var(--oc-red-6-rgb), .15); }
+.diff-rows.unified .diff-line.add { background: rgba(var(--oc-green-6-rgb), .16); }
 
 /* inline: flowing track-changes */
 .diff-rows.inline { padding: 12px 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .diff-rows.inline .diff-line { display: block; }
 
 /* ins / del word marks */
-.diff-text ins, .diff-rows.inline ins { background: rgba(46,160,67,.4); color: #c4f3ce; text-decoration: none; border-radius: 2px; }
-.diff-text del, .diff-rows.inline del { background: rgba(248,81,73,.4); color: #ffd7d4; text-decoration: none; border-radius: 2px; }
+.diff-text ins, .diff-rows.inline ins { background: rgba(var(--oc-green-6-rgb), .4); color: var(--oc-green-1); text-decoration: none; border-radius: 2px; }
+.diff-text del, .diff-rows.inline del { background: rgba(var(--oc-red-6-rgb), .4); color: var(--oc-red-1); text-decoration: none; border-radius: 2px; }
 .diff-rows.inline del { text-decoration: line-through; }
 
 /* hoverable change rows */
 .diff-change { cursor: help; }
-.diff-change:hover { outline: 1px solid #90caf9; outline-offset: -1px; }
+.diff-change:hover { outline: 1px solid var(--oc-blue-3); outline-offset: -1px; }
 
-/* hover tooltip + pinned popovers (dark, like the toolbar/sidebar chrome) */
+/* hover tooltip + pinned popovers (raised gray-8 surface, like the app chrome) */
 .diff-tooltip, .diff-pin {
   position: absolute; z-index: 30; width: 260px; max-width: 80%;
-  background: #2e3035; color: #dfe2e7; border: 1px solid #15161a; border-radius: 5px;
+  background: var(--oc-gray-8); color: var(--oc-gray-3); border: 1px solid var(--oc-gray-9); border-radius: 5px;
   box-shadow: 0 4px 16px rgba(0,0,0,.55); padding: 6px 10px 10px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px;
 }
@@ -532,16 +541,16 @@ html, body {
 .diff-pin-btn, .diff-pin-close {
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: none; cursor: pointer;
-  padding: 3px; border-radius: 3px; color: #aab1ba;
+  padding: 3px; border-radius: 3px; color: var(--oc-gray-5);
 }
-.diff-pin-btn:hover, .diff-pin-close:hover { background: rgba(255,255,255,.12); color: #fff; }
-.diff-tip-body h3 { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #8b919a; margin-bottom: 6px; }
+.diff-pin-btn:hover, .diff-pin-close:hover { background: rgba(255,255,255,.1); color: #fff; }
+.diff-tip-body h3 { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--oc-gray-6); margin-bottom: 6px; }
 .diff-tip-body dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; }
-.diff-tip-body dt { color: #8b919a; }
-.diff-tip-body dd { color: #f0f2f5; word-break: break-word; }
-.diff-tip-note { color: #8b919a; font-style: italic; }
+.diff-tip-body dt { color: var(--oc-gray-6); }
+.diff-tip-body dd { color: var(--oc-gray-3); word-break: break-word; }
+.diff-tip-note { color: var(--oc-gray-6); font-style: italic; }
 
-#formatBadge.badge-compare { background: #5c6bc0; color: #fff; }
+#formatBadge.badge-compare { background: var(--oc-indigo-6); color: #fff; }
 
 /* ── EPUB / MOBI (foliate-js) ──────────────────────────────────────────── */
 .epub-view {

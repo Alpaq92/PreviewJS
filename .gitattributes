@@ -1,0 +1,34 @@
+# Binary assets — never apply line-ending conversion (it corrupts byte offsets,
+# e.g. in uncompressed PDFs and font/image tables).
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.avif  binary
+*.bmp   binary
+*.ico   binary
+*.tif   binary
+*.tiff  binary
+*.djvu  binary
+*.djv   binary
+*.epub  binary
+*.mobi  binary
+*.azw3  binary
+*.fb2   binary
+*.cbz   binary
+*.cbr   binary
+*.cbt   binary
+*.docx  binary
+*.doc   binary
+*.xlsx  binary
+*.pptx  binary
+*.odt   binary
+*.ods   binary
+*.odp   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.wasm  binary
