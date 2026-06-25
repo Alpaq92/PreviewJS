@@ -51,7 +51,7 @@ CSP asset list.
 ## Running Locally
 
 ```bash
-git clone --recurse-submodules https://github.com/Alpaq92/ReaderJS.git
+git clone https://github.com/Alpaq92/ReaderJS.git
 cd ReaderJS
 npm install
 npm run dev
@@ -82,17 +82,12 @@ ReaderJS is built on these open-source libraries:
 | **[Vite](https://github.com/vitejs/vite)** | Evan You / Vite contributors | Build tooling and development server |
 | **[Material Design Icons](https://pictogrammers.com/library/mdi/)** | Pictogrammers | UI icons (Apache-2.0) |
 
-### Submodules (reference / bundled)
-
-| Submodule | Author / Source | Notes |
-|-----------|----------------|-------|
-| [mozilla/pdf.js](https://github.com/mozilla/pdf.js) | Mozilla | Pinned for worker build |
-| [Alpaq92/JSDoc](https://github.com/Alpaq92/JSDoc) | Alpaq92 | Bundled source for `.doc` rendering |
-| [dolanmiu/docx](https://github.com/dolanmiu/docx) | dolanmiu | Reference |
-| [webodf/WebODF](https://github.com/webodf/WebODF) | webodf | Reference |
-| [tbluemel/rtf.js](https://github.com/tbluemel/rtf.js) | tbluemel | Reference |
-| [markedjs/marked](https://github.com/markedjs/marked) | Christopher Jeffrey et al. | Reference |
-| [johnfactotum/foliate-js](https://github.com/johnfactotum/foliate-js) | John Factotum | Bundled source for EPUB/MOBI rendering (pinned commit) |
+Every library above is a normal **npm dependency** — `npm install` is all you
+need, no git submodules. The two that aren't published to npm
+([foliate-js](https://github.com/johnfactotum/foliate-js) for e-books and
+[DejaView](https://github.com/Alpaq92/dejaview) for DjVu) are pinned to a commit
+as git dependencies in `package.json`. Every engine is permissively licensed
+(MIT / BSD / Apache-2.0 / 0BSD).
 
 ## Gallery
 

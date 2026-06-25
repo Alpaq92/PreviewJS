@@ -18,7 +18,11 @@ const stubFoliatePdf = {
 export default defineConfig({
   plugins: [stubFoliatePdf],
   optimizeDeps: {
-    include: ['pdfjs-dist', 'mammoth']
+    include: ['pdfjs-dist', 'mammoth'],
+    // Don't esbuild-prebundle foliate-js: it's source-style ESM and its
+    // (stubbed, unused) pdf.js uses top-level await, which fails the es2020
+    // optimizer target. Served as source, it goes through stubFoliatePdf.
+    exclude: ['foliate-js'],
   },
   build: {
     target: 'es2020'

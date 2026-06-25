@@ -1,7 +1,7 @@
 import { BaseRenderer } from './base-renderer.js'
-// Registers the <foliate-view> custom element. foliate-js is vendored as a
-// git submodule (its recommended integration method) and is MIT-licensed.
-import '../../submodules/foliate-js/view.js'
+// Registers the <foliate-view> custom element. foliate-js (MIT) isn't published
+// to npm, so it's pinned to a commit as a git dependency in package.json.
+import 'foliate-js/view.js'
 
 // Reflowable books are styled by injecting CSS into each section document.
 // "Zoom" maps to font-size since EPUB/MOBI have no fixed page geometry.
