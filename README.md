@@ -18,8 +18,11 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 | Legacy Word 97–2003 | `.doc` | JSDoc |
 | Word Open XML | `.docx` | mammoth.js |
 | PowerPoint | `.pptx` | PptxViewJS |
+| Spreadsheet | `.xlsx` `.xls` `.xlsm` `.xlsb` | SheetJS |
 | Markdown | `.md` `.markdown` | marked |
 | Plain text | `.txt` `.text` `.log` | native |
+| CSV / TSV | `.csv` `.tsv` | Papa Parse |
+| Source code | `.js` `.ts` `.json` `.xml` `.yaml` `.py` … | highlight.js |
 | Image (+ EXIF) | `.png` `.jpg` `.gif` `.webp` `.avif` `.bmp` `.svg` `.tiff` | native + UTIF.js (TIFF) + exifr (EXIF) |
 | Comic Book Archive | `.cbz` `.cbr` `.cbt` | JSZip (CBZ) + libarchive.js (CBR/CBT) |
 | E-book | `.epub` `.mobi` `.azw3` `.fb2` | foliate-js |
@@ -50,6 +53,9 @@ ReaderJS is built on these open-source libraries:
 | **[JSDoc](https://github.com/Alpaq92/JSDoc)** | Alpaq92 | Binary `.doc` (Word 97–2003) reading and rendering — pure JS, zero dependencies, clean-room [MS-CFB] / [MS-DOC] implementation |
 | **[mammoth.js](https://github.com/mwilliamson/mammoth.js)** | Michael Williamson | `.docx` (Word Open XML) → HTML conversion |
 | **[PptxViewJS](https://github.com/gptsci/pptxviewjs)** | Alex Wong / gptsci | `.pptx` (PowerPoint) slide rendering to canvas |
+| **[SheetJS](https://sheetjs.com/)** | SheetJS LLC | `.xlsx` / `.xls` spreadsheet → HTML tables (Apache-2.0) |
+| **[Papa Parse](https://www.papaparse.com/)** | Matt Holt | CSV / TSV parsing |
+| **[highlight.js](https://highlightjs.org/)** | Highlight.js contributors | Syntax highlighting for source-code files |
 | **[RTF.js](https://github.com/tbluemel/rtf.js)** | tbluemel | RTF document rendering, including EMFJS and WMFJS for Windows metafile graphics |
 | **[JSZip](https://github.com/Stuk/jszip)** | Stuk | ODF / ZIP container reading |
 | **[jQuery](https://github.com/jquery/jquery)** | OpenJS Foundation | DOM utility required internally by RTF.js |

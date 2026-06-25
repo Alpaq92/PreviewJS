@@ -9,7 +9,14 @@ import { ComicRenderer } from './renderers/comic-renderer.js'
 import { EPUBRenderer } from './renderers/epub-renderer.js'
 import { ImageRenderer } from './renderers/image-renderer.js'
 import { PPTXRenderer } from './renderers/pptx-renderer.js'
+import { CSVRenderer  } from './renderers/csv-renderer.js'
+import { CodeRenderer } from './renderers/code-renderer.js'
+import { XLSXRenderer } from './renderers/xlsx-renderer.js'
 import { t, applyTranslations, setLang, getLang } from './i18n.js'
+
+const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html','htm',
+  'yaml','yml','css','scss','less','py','java','c','h','cpp','cc','hpp','cs','go','rs',
+  'rb','php','sh','bash','sql','kt','swift','toml','ini','diff']
 
 const EXT_MAP = {
   pdf: 'pdf',
@@ -18,6 +25,9 @@ const EXT_MAP = {
   docx: 'docx',
   doc: 'doc',
   pptx: 'pptx',
+  xlsx: 'xlsx', xls: 'xlsx', xlsm: 'xlsx', xlsb: 'xlsx',
+  csv: 'csv', tsv: 'csv',
+  ...Object.fromEntries(CODE_EXTS.map(e => [e, 'code'])),
   md: 'md', markdown: 'md',
   txt: 'txt', text: 'txt', log: 'txt',
   png: 'image', jpg: 'image', jpeg: 'image', gif: 'image', webp: 'image',
@@ -41,6 +51,9 @@ class DocumentViewer {
       epub: new EPUBRenderer(),
       image: new ImageRenderer(),
       pptx: new PPTXRenderer(),
+      xlsx: new XLSXRenderer(),
+      csv:  new CSVRenderer(),
+      code: new CodeRenderer(),
     }
     this.activeRenderer = null
     this.currentPage    = 1
