@@ -35,6 +35,19 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 - Client-side only — documents are never uploaded or transmitted
 - Multilingual UI — auto-detects your browser language with a manual switcher (English, Polish, Spanish, French, German, Portuguese, Chinese, Japanese, Russian)
 
+## Embedding
+
+ReaderJS can be embedded into another app as a read-only, self-contained,
+same-origin viewer that takes document **bytes + a filename** (no upload UI):
+
+```js
+const inst = ReaderJS.mount(container, { blob, name: 'report.pdf' })
+```
+
+Build the vendorable artifact with `npm run build:embed` (→ `dist-embed/`). See
+[EMBEDDING.md](EMBEDDING.md) for the full API, the `?src` iframe variant, and the
+CSP asset list.
+
 ## Running Locally
 
 ```bash

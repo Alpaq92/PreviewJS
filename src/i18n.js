@@ -371,7 +371,8 @@ const dict = {
 const STORAGE_KEY = 'readerjs-lang'
 
 function detectLang() {
-  const saved = localStorage.getItem(STORAGE_KEY)
+  let saved = null
+  try { saved = localStorage.getItem(STORAGE_KEY) } catch { /* storage blocked (e.g. sandboxed/embedded) */ }
   if (saved && dict[saved]) return saved
   const nav = (navigator.language || 'en').split('-')[0].toLowerCase()
   return dict[nav] ? nav : 'en'
@@ -397,7 +398,7 @@ export function applyTranslations(root = document) {
 export function setLang(code) {
   if (!dict[code]) return
   lang = code
-  localStorage.setItem(STORAGE_KEY, code)
+  try { localStorage.setItem(STORAGE_KEY, code) } catch { /* storage blocked (e.g. sandboxed/embedded) */ }
   document.documentElement.lang = code
   applyTranslations()
 }

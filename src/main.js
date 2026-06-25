@@ -1,19 +1,25 @@
-import { PDFRenderer  } from './renderers/pdf-renderer.js'
-import { ODFRenderer  } from './renderers/odf-renderer.js'
-import { RTFRenderer  } from './renderers/rtf-renderer.js'
-import { DOCXRenderer } from './renderers/docx-renderer.js'
-import { DOCRenderer  } from './renderers/doc-renderer.js'
-import { MDRenderer   } from './renderers/md-renderer.js'
-import { TXTRenderer  } from './renderers/txt-renderer.js'
-import { ComicRenderer } from './renderers/comic-renderer.js'
-import { EPUBRenderer } from './renderers/epub-renderer.js'
-import { ImageRenderer } from './renderers/image-renderer.js'
-import { PPTXRenderer } from './renderers/pptx-renderer.js'
-import { CSVRenderer  } from './renderers/csv-renderer.js'
-import { CodeRenderer } from './renderers/code-renderer.js'
-import { XLSXRenderer } from './renderers/xlsx-renderer.js'
-import { DjVuRenderer } from './renderers/djvu-renderer.js'
 import { t, applyTranslations, setLang, getLang } from './i18n.js'
+
+// Each format's renderer module is imported on demand, so opening a document
+// only pulls that format's engine (pdf.js, mammoth, foliate, libarchive, …).
+// Keeps the initial bundle lean — important for the embeddable build.
+const RENDERER_LOADERS = {
+  pdf:   () => import('./renderers/pdf-renderer.js').then(m => new m.PDFRenderer()),
+  odf:   () => import('./renderers/odf-renderer.js').then(m => new m.ODFRenderer()),
+  rtf:   () => import('./renderers/rtf-renderer.js').then(m => new m.RTFRenderer()),
+  docx:  () => import('./renderers/docx-renderer.js').then(m => new m.DOCXRenderer()),
+  doc:   () => import('./renderers/doc-renderer.js').then(m => new m.DOCRenderer()),
+  md:    () => import('./renderers/md-renderer.js').then(m => new m.MDRenderer()),
+  txt:   () => import('./renderers/txt-renderer.js').then(m => new m.TXTRenderer()),
+  comic: () => import('./renderers/comic-renderer.js').then(m => new m.ComicRenderer()),
+  epub:  () => import('./renderers/epub-renderer.js').then(m => new m.EPUBRenderer()),
+  image: () => import('./renderers/image-renderer.js').then(m => new m.ImageRenderer()),
+  pptx:  () => import('./renderers/pptx-renderer.js').then(m => new m.PPTXRenderer()),
+  xlsx:  () => import('./renderers/xlsx-renderer.js').then(m => new m.XLSXRenderer()),
+  csv:   () => import('./renderers/csv-renderer.js').then(m => new m.CSVRenderer()),
+  code:  () => import('./renderers/code-renderer.js').then(m => new m.CodeRenderer()),
+  djvu:  () => import('./renderers/djvu-renderer.js').then(m => new m.DjVuRenderer()),
+}
 
 const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html','htm',
   'yaml','yml','css','scss','less','py','java','c','h','cpp','cc','hpp','cs','go','rs',
@@ -39,25 +45,10 @@ const EXT_MAP = {
   fb2: 'epub', fbz: 'epub',
 }
 
-class DocumentViewer {
+export class DocumentViewer {
   constructor() {
-    this.renderers = {
-      pdf:  new PDFRenderer(),
-      odf:  new ODFRenderer(),
-      rtf:  new RTFRenderer(),
-      docx: new DOCXRenderer(),
-      doc:  new DOCRenderer(),
-      md:   new MDRenderer(),
-      txt:  new TXTRenderer(),
-      comic: new ComicRenderer(),
-      epub: new EPUBRenderer(),
-      image: new ImageRenderer(),
-      pptx: new PPTXRenderer(),
-      xlsx: new XLSXRenderer(),
-      csv:  new CSVRenderer(),
-      code: new CodeRenderer(),
-      djvu: new DjVuRenderer(),
-    }
+    this._rendererCache    = new Map()   // format → renderer instance (built once, reused)
+    this._rendererPromises = new Map()   // format → in-flight import promise (dedupes concurrent opens)
     this.activeRenderer = null
     this.currentPage    = 1
     this.numPages       = 0
@@ -71,38 +62,45 @@ class DocumentViewer {
   _initI18n() {
     document.documentElement.lang = getLang()
     const sel = document.getElementById('langSelect')
-    sel.value = getLang()
-    sel.addEventListener('change', e => setLang(e.target.value))
+    if (sel) {
+      sel.value = getLang()
+      sel.addEventListener('change', e => setLang(e.target.value))
+    }
     applyTranslations()
   }
 
   /* ── UI wiring ───────────────────────────────────────────────────────── */
   _bindUI() {
-    // File open
-    document.getElementById('fileInput').addEventListener('change', e => {
-      const f = e.target.files?.[0]
-      if (f) this.openFile(f)
-      e.target.value = ''          // allow re-opening same file
-    })
-
-    // Drag-drop on the full window
-    document.addEventListener('dragover', e => e.preventDefault())
-    document.addEventListener('drop', e => {
-      e.preventDefault()
-      const f = e.dataTransfer.files?.[0]
-      if (f) this.openFile(f)
-    })
+    // File open + drag-drop — only in the full app. The embeddable build omits
+    // the dropzone/file input (the host hands documents in as bytes), so this
+    // whole block is skipped when those elements are absent.
+    const fileInput = document.getElementById('fileInput')
     const dz = document.getElementById('dropzone')
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over') })
-    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'))
-    dz.addEventListener('drop', e => {
-      e.preventDefault(); dz.classList.remove('drag-over')
-      const f = e.dataTransfer.files?.[0]
-      if (f) this.openFile(f)
-    })
-    dz.addEventListener('click', e => {
-      if (e.target.tagName !== 'LABEL') document.getElementById('fileInput').click()
-    })
+    if (fileInput && dz) {
+      fileInput.addEventListener('change', e => {
+        const f = e.target.files?.[0]
+        if (f) this.openFile(f)
+        e.target.value = ''          // allow re-opening same file
+      })
+
+      // Drag-drop on the full window
+      document.addEventListener('dragover', e => e.preventDefault())
+      document.addEventListener('drop', e => {
+        e.preventDefault()
+        const f = e.dataTransfer.files?.[0]
+        if (f) this.openFile(f)
+      })
+      dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over') })
+      dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'))
+      dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.classList.remove('drag-over')
+        const f = e.dataTransfer.files?.[0]
+        if (f) this.openFile(f)
+      })
+      dz.addEventListener('click', e => {
+        if (e.target.tagName !== 'LABEL') fileInput.click()
+      })
+    }
 
     // Navigation
     document.getElementById('prevPage').addEventListener('click', () => this.changePage(-1))
@@ -137,8 +135,30 @@ class DocumentViewer {
   }
 
   /* ── File loading ────────────────────────────────────────────────────── */
-  async openFile(file) {
-    const ext    = file.name.split('.').pop().toLowerCase()
+  // Lazily import + instantiate a format's renderer. Cached so it's built once;
+  // concurrent opens of the same format share a single in-flight import.
+  _getRenderer(format) {
+    if (this._rendererCache.has(format)) return Promise.resolve(this._rendererCache.get(format))
+    if (this._rendererPromises.has(format)) return this._rendererPromises.get(format)
+    const p = RENDERER_LOADERS[format]().then(inst => {
+      this._rendererCache.set(format, inst)
+      this._rendererPromises.delete(format)
+      return inst
+    })
+    this._rendererPromises.set(format, p)
+    return p
+  }
+
+  // Full app: open a picked File (dropzone / file input / drag-drop).
+  openFile(file) {
+    return this.loadBytes(file, file.name, file.type)
+  }
+
+  // Render raw bytes given a filename — its extension selects the renderer.
+  // The embeddable build feeds documents this way (no File object needed).
+  // `source` is a Blob/File or an ArrayBuffer.
+  async loadBytes(source, name, mime) {
+    const ext    = (name || '').split('.').pop().toLowerCase()
     const format = EXT_MAP[ext]
 
     if (!format) {
@@ -150,9 +170,9 @@ class DocumentViewer {
     this._hideDropzone()
 
     try {
-      const buffer   = await file.arrayBuffer()
-      const renderer = this.renderers[format]
-      this.currentFileName = file.name   // used by foliate for format hinting
+      const buffer   = source instanceof ArrayBuffer ? source : await source.arrayBuffer()
+      const renderer = await this._getRenderer(format)
+      this.currentFileName = name   // used by foliate for format hinting
 
       this.activeRenderer?.destroy()
       this.activeRenderer = renderer
@@ -169,17 +189,18 @@ class DocumentViewer {
       // Renderers may prefer a default zoom (e.g. comics fit to width);
       // otherwise keep 100% without forcing a redundant re-render.
       const scaleOpt = renderer.defaultScaleOption || '1'
-      document.getElementById('scaleSelect').value = scaleOpt
+      const scaleSel = document.getElementById('scaleSelect')
+      if (scaleSel) scaleSel.value = scaleOpt
       if (renderer.defaultScaleOption) this._applyScaleOption(scaleOpt)
       else this.scale = 1.0
 
       this.updatePageInfo()
       this._refreshThumbsPlaceholder()
       this._setFormatBadge(format)
-      document.title = `${file.name} — ReaderJS`
+      document.title = `${name} — ReaderJS`
     } catch (err) {
       console.error('[ReaderJS] load error:', err)
-      this._showError(t('err.couldNotOpen', { name: file.name, msg: err.message }))
+      this._showError(t('err.couldNotOpen', { name, msg: err.message }))
     } finally {
       this._setLoading(false)
     }
@@ -298,8 +319,8 @@ class DocumentViewer {
   }
 
   _hideDropzone() {
-    document.getElementById('dropzone').classList.add('hidden')
-    document.getElementById('docContainer').classList.remove('hidden')
+    document.getElementById('dropzone')?.classList.add('hidden')
+    document.getElementById('docContainer')?.classList.remove('hidden')
   }
 
   _setFormatBadge(format) {
@@ -327,6 +348,10 @@ class DocumentViewer {
   }
 }
 
+// Auto-boot the full app. The embeddable page (reader.html) has no #dropzone
+// and boots its own viewer via src/reader.js, so this stays out of its way.
 document.addEventListener('DOMContentLoaded', () => {
-  window.viewer = new DocumentViewer()
+  if (document.getElementById('dropzone')) {
+    window.viewer = new DocumentViewer()
+  }
 })

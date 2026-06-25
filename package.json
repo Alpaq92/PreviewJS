@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:embed:app": "vite build --config vite.config.app.js",
+    "build:embed:loader": "vite build --config vite.config.embed.js",
+    "build:embed": "npm run build:embed:app && npm run build:embed:loader",
     "preview": "vite preview",
     "submodules:init": "git submodule update --init --recursive",
     "docs": "jsdoc src -r -d docs"

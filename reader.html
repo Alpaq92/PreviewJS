@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="app.title">ReaderJS — Universal Document Viewer</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <!-- WebODF is loaded on-demand by odf-renderer.js when an ODF file is opened -->
+</head>
+<body>
+  <div id="outerContainer">
+
+    <!-- Sidebar: page thumbnails -->
+    <div id="sidebarContainer">
+      <div id="sidebarToolbar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M3,11H11V3H3M3,21H11V13H3M13,21H21V13H13M13,3V11H21V3" />
+        </svg>
+        <span class="sidebar-title" data-i18n="sidebar.pages">Pages</span>
+      </div>
+      <div id="sidebarContent">
+        <div id="thumbsContent"></div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div id="mainContainer">
+
+      <!-- Top toolbar -->
+      <div id="toolbarContainer">
+        <div id="toolbarLeft">
+          <button id="sidebarToggle" class="toolbar-btn" title="Toggle Sidebar" data-i18n-title="tip.sidebar">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" />
+            </svg>
+          </button>
+
+          <div class="toolbar-separator"></div>
+
+          <button id="prevPage" class="toolbar-btn" title="Previous Page (←)" data-i18n-title="tip.prevPage" disabled>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+            </svg>
+          </button>
+
+          <div id="pageNumberGroup">
+            <input id="pageNumber" type="number" value="1" min="1" max="1" title="Current Page" data-i18n-title="tip.currentPage" />
+            <span class="page-sep">/</span>
+            <span id="totalPages">—</span>
+          </div>
+
+          <button id="nextPage" class="toolbar-btn" title="Next Page (→)" data-i18n-title="tip.nextPage" disabled>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div id="toolbarMiddle">
+          <button id="zoomOut" class="toolbar-btn" title="Zoom Out (Ctrl -)" data-i18n-title="tip.zoomOut">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19,13H5V11H19V13Z" />
+            </svg>
+          </button>
+
+          <select id="scaleSelect" title="Zoom" data-i18n-title="tip.zoom">
+            <option value="auto" data-i18n="zoom.auto">Auto</option>
+            <option value="page-fit" data-i18n="zoom.pageFit">Page Fit</option>
+            <option value="page-width" data-i18n="zoom.pageWidth">Page Width</option>
+            <option value="page-height" data-i18n="zoom.fitHeight">Fit Height</option>
+            <option value="0.5">50%</option>
+            <option value="0.75">75%</option>
+            <option value="1" selected>100%</option>
+            <option value="1.25">125%</option>
+            <option value="1.5">150%</option>
+            <option value="2">200%</option>
+            <option value="3">300%</option>
+          </select>
+
+          <button id="zoomIn" class="toolbar-btn" title="Zoom In (Ctrl +)" data-i18n-title="tip.zoomIn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div id="toolbarRight">
+          <select id="langSelect" title="Language" data-i18n-title="tip.language">
+            <option value="en">English</option>
+            <option value="pl">Polski</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="pt">Português</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+            <option value="ru">Русский</option>
+          </select>
+
+          <div class="toolbar-separator"></div>
+
+          <span id="formatBadge" class="hidden"></span>
+
+          <div class="toolbar-separator"></div>
+
+          <button id="printBtn" class="toolbar-btn" title="Print (Ctrl+P)" data-i18n-title="tip.print">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading bar -->
+      <div id="loadingBar" class="hidden">
+        <div id="loadingBarProgress"></div>
+      </div>
+
+      <!-- Error bar -->
+      <div id="errorBar" class="hidden" role="alert">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="flex-shrink:0">
+          <path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+        </svg>
+        <span id="errorMsg"></span>
+        <button id="errorClose" aria-label="Dismiss" data-i18n-aria="aria.dismiss">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Viewer -->
+      <div id="viewerContainer">
+
+        <!-- Document render target (the host hands documents in as bytes) -->
+        <div id="docContainer"></div>
+
+      </div><!-- /viewerContainer -->
+    </div><!-- /mainContainer -->
+  </div><!-- /outerContainer -->
+
+  <!-- Print layer: populated by PDF renderer before window.print() -->
+  <div id="printLayer" aria-hidden="true"></div>
+
+  <script type="module" src="/src/reader.js"></script>
+</body>
+</html>
