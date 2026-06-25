@@ -13,6 +13,7 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 | Format | Extension(s) | Engine |
 |--------|-------------|--------|
 | PDF | `.pdf` | PDF.js (Mozilla) |
+| DjVu | `.djvu` `.djv` | DejaView |
 | ODF — Writer, Calc, Impress | `.odt` `.ods` `.odp` `.odg` | JSZip + DOMParser |
 | Rich Text Format | `.rtf` | RTF.js |
 | Legacy Word 97–2003 | `.doc` | JSDoc |
@@ -50,6 +51,7 @@ ReaderJS is built on these open-source libraries:
 | Library | Author / Source | Role |
 |---------|----------------|------|
 | **[PDF.js](https://github.com/mozilla/pdf.js)** | Mozilla Foundation | PDF rendering (via `pdfjs-dist`) |
+| **[DejaView](https://github.com/Alpaq92/dejaview)** | Alpaq92 | Pure-JS DjVu decoder/renderer — clean-room implementation of the public format (cross-referenced against MIT [DjvuNet](https://github.com/DjvuNet/DjvuNet)), no GPL DjVuLibre code |
 | **[JSDoc](https://github.com/Alpaq92/JSDoc)** | Alpaq92 | Binary `.doc` (Word 97–2003) reading and rendering — pure JS, zero dependencies, clean-room [MS-CFB] / [MS-DOC] implementation |
 | **[mammoth.js](https://github.com/mwilliamson/mammoth.js)** | Michael Williamson | `.docx` (Word Open XML) → HTML conversion |
 | **[PptxViewJS](https://github.com/gptsci/pptxviewjs)** | Alex Wong / gptsci | `.pptx` (PowerPoint) slide rendering to canvas |

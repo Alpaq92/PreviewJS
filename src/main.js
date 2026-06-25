@@ -12,6 +12,7 @@ import { PPTXRenderer } from './renderers/pptx-renderer.js'
 import { CSVRenderer  } from './renderers/csv-renderer.js'
 import { CodeRenderer } from './renderers/code-renderer.js'
 import { XLSXRenderer } from './renderers/xlsx-renderer.js'
+import { DjVuRenderer } from './renderers/djvu-renderer.js'
 import { t, applyTranslations, setLang, getLang } from './i18n.js'
 
 const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html','htm',
@@ -20,6 +21,7 @@ const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html'
 
 const EXT_MAP = {
   pdf: 'pdf',
+  djvu: 'djvu', djv: 'djvu',
   odt: 'odf', ods: 'odf', odp: 'odf', odg: 'odf', odm: 'odf', odf: 'odf',
   rtf: 'rtf',
   docx: 'docx',
@@ -54,6 +56,7 @@ class DocumentViewer {
       xlsx: new XLSXRenderer(),
       csv:  new CSVRenderer(),
       code: new CodeRenderer(),
+      djvu: new DjVuRenderer(),
     }
     this.activeRenderer = null
     this.currentPage    = 1

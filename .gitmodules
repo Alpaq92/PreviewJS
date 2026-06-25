@@ -19,3 +19,6 @@
 [submodule "submodules/foliate-js"]
 	path = submodules/foliate-js
 	url = https://github.com/johnfactotum/foliate-js
+[submodule "submodules/dejaview"]
+	path = submodules/dejaview
+	url = https://github.com/Alpaq92/dejaview
