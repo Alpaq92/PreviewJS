@@ -34,26 +34,28 @@ html, body {
 
 #sidebarToolbar {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
   background: #2e2e2e;
   border-bottom: 1px solid #111;
   flex-shrink: 0;
   min-height: 42px;   /* match the main toolbar height */
+  color: #90caf9;     /* header icon colour */
 }
-
-.sidebar-tab {
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: #aaa;
-  padding: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.15s, background 0.15s;
+.sidebar-title {
+  color: #bbb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
 }
-.sidebar-tab:hover   { color: #fff; background: #444; }
-.sidebar-tab.active  { color: #90caf9; border-bottom: 2px solid #90caf9; }
+.thumbs-empty {
+  color: #777;
+  font-size: 12px;
+  text-align: center;
+  padding: 24px 8px;
+}
 
 #sidebarContent {
   flex: 1;
@@ -70,10 +72,11 @@ html, body {
   transition: opacity 0.15s;
 }
 .thumb:hover, .thumb.active { opacity: 1; }
-.thumb canvas {
+.thumb canvas, .thumb img {
   display: block;
   margin: 0 auto;
   max-width: 100%;
+  height: auto;
   box-shadow: 0 1px 4px rgba(0,0,0,.5);
 }
 .thumb-label {

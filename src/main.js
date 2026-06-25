@@ -121,10 +121,8 @@ class DocumentViewer {
     // Print
     document.getElementById('printBtn').addEventListener('click', () => this.print())
 
-    // Sidebar tabs
+    // Sidebar
     document.getElementById('sidebarToggle').addEventListener('click', () => this._toggleSidebar())
-    document.getElementById('thumbsBtn').addEventListener('click',   () => this._sidebarTab('thumbs'))
-    document.getElementById('outlineBtn').addEventListener('click',  () => this._sidebarTab('outline'))
 
     // Error bar
     document.getElementById('errorClose').addEventListener('click', () => {
@@ -158,6 +156,7 @@ class DocumentViewer {
 
       const container = document.getElementById('docContainer')
       container.innerHTML = ''
+      document.getElementById('thumbsContent').innerHTML = ''  // clear stale thumbs
 
       await renderer.load(buffer, container, this)
 
@@ -172,6 +171,7 @@ class DocumentViewer {
       else this.scale = 1.0
 
       this.updatePageInfo()
+      this._refreshThumbsPlaceholder()
       this._setFormatBadge(format)
       document.title = `${file.name} — ReaderJS`
     } catch (err) {
@@ -310,11 +310,16 @@ class DocumentViewer {
     document.getElementById('outerContainer').classList.toggle('sidebar-open')
   }
 
-  _sidebarTab(tab) {
-    document.getElementById('thumbsContent') .classList.toggle('hidden', tab !== 'thumbs')
-    document.getElementById('outlineContent').classList.toggle('hidden', tab !== 'outline')
-    document.getElementById('thumbsBtn') .classList.toggle('active', tab === 'thumbs')
-    document.getElementById('outlineBtn').classList.toggle('active', tab === 'outline')
+  // Renderers that paginate build their own thumbnails; show a placeholder for
+  // single-page / reflowable formats so the sidebar never looks broken.
+  _refreshThumbsPlaceholder() {
+    const box = document.getElementById('thumbsContent')
+    if (box.children.length) return
+    const p = document.createElement('div')
+    p.className = 'thumbs-empty'
+    p.dataset.i18n = 'sidebar.noThumbnails'
+    p.textContent = t('sidebar.noThumbnails')
+    box.appendChild(p)
   }
 }
 
