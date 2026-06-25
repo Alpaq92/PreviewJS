@@ -120,9 +120,19 @@ export class DjVuRenderer extends BaseRenderer {
     })
   }
 
-  _subsample(info) {
+  // downscale factor to keep a render under `capW` px wide (1 = full resolution)
+  _subsample(info, capW) {
     const w = info?.width || 800
-    return Math.max(1, Math.round(w / Math.min(w, MAX_RENDER_W)))
+    return Math.max(1, Math.round(w / Math.min(w, capW)))
+  }
+
+  // worker render result (transferable rgba) → a ready-to-mount canvas
+  _canvasFromRender(res) {
+    const canvas = document.createElement('canvas')
+    canvas.width = res.width
+    canvas.height = res.height
+    canvas.getContext('2d').putImageData(new ImageData(res.rgba, res.width, res.height), 0, 0)
+    return canvas
   }
 
   async _renderPage(i) {
@@ -131,12 +141,9 @@ export class DjVuRenderer extends BaseRenderer {
     wrap.dataset.rendered = '1'
     const gen = this._gen
     try {
-      const res = await this._call('render', { index: i, subsample: this._subsample(this._infos[i]) })
+      const res = await this._call('render', { index: i, subsample: this._subsample(this._infos[i], MAX_RENDER_W) })
       if (gen !== this._gen || !this._worker) return
-      const canvas = document.createElement('canvas')
-      canvas.width = res.width
-      canvas.height = res.height
-      canvas.getContext('2d').putImageData(new ImageData(res.rgba, res.width, res.height), 0, 0)
+      const canvas = this._canvasFromRender(res)
       wrap.innerHTML = ''
       wrap.appendChild(canvas)
     } catch {
@@ -176,14 +183,10 @@ export class DjVuRenderer extends BaseRenderer {
     if (!box) return
     for (let i = 0; i < this.numPages; i++) {
       const info = this._infos[i]
-      const sub = Math.max(1, Math.round((info?.width || 800) / THUMB_W))
       let res
-      try { res = await this._call('render', { index: i, subsample: sub }) } catch { continue }
+      try { res = await this._call('render', { index: i, subsample: this._subsample(info, THUMB_W) }) } catch { continue }
       if (gen !== this._gen || !this._worker) return
-      const canvas = document.createElement('canvas')
-      canvas.width = res.width
-      canvas.height = res.height
-      canvas.getContext('2d').putImageData(new ImageData(res.rgba, res.width, res.height), 0, 0)
+      const canvas = this._canvasFromRender(res)
       const img = document.createElement('img')
       img.src = canvas.toDataURL('image/png')
       const wrap = document.createElement('div')
