@@ -85,7 +85,10 @@ export class ComicRenderer extends BaseRenderer {
 
   async _extractArchive(buffer) {
     const { Archive } = await import('libarchive.js')
-    Archive.init({ workerUrl: '/libarchive/worker-bundle.js' })
+    // Base-relative so it resolves both on localhost ('/') and on GitHub Pages,
+    // which is served under a sub-path ('/ReaderJS/'). The worker loads its
+    // sibling libarchive.wasm relative to itself, so only this URL needs fixing.
+    Archive.init({ workerUrl: `${import.meta.env.BASE_URL}libarchive/worker-bundle.js` })
 
     const archive  = await Archive.open(new Blob([buffer]))
     const fileList = await archive.getFilesArray()
