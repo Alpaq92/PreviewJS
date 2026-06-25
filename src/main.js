@@ -313,6 +313,7 @@ class DocumentViewer {
   // Renderers that paginate build their own thumbnails; show a placeholder for
   // single-page / reflowable formats so the sidebar never looks broken.
   _refreshThumbsPlaceholder() {
+    if (this.activeRenderer?.buildsThumbnailsAsync) return  // renderer fills it itself
     const box = document.getElementById('thumbsContent')
     if (box.children.length) return
     const p = document.createElement('div')
