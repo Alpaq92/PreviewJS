@@ -174,12 +174,15 @@ export function renderCompare(target, { leftText, rightText, blame = {}, mode = 
   // mode toggle (segmented control)
   const toggle = document.createElement('div')
   toggle.className = 'diff-mode-toggle'
+  const group = document.createElement('div')
+  group.className = 'diff-mode-group'   // segmented well wrapping the three buttons
+  toggle.appendChild(group)
   const btns = {}
   for (const [m, key] of [['side-by-side', 'compare.modeSideBySide'], ['unified', 'compare.modeUnified'], ['inline', 'compare.modeInline']]) {
     const b = document.createElement('button')
     b.className = 'diff-mode-btn'; b.dataset.mode = m; b.dataset.i18n = key; b.textContent = t(key)
     b.addEventListener('click', () => setMode(m))
-    toggle.appendChild(b); btns[m] = b
+    group.appendChild(b); btns[m] = b
   }
 
   const bodyWrap = document.createElement('div')   // position:relative anchor for tooltips/pins
