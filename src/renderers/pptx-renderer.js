@@ -67,20 +67,24 @@ export class PPTXRenderer extends BaseRenderer {
     if (!box) return
     const tw = THUMB_W
     const th = Math.max(1, Math.round(tw * this._slideH / this._slideW))
+    const canvas = document.createElement('canvas')
+    canvas.width = tw
+    canvas.height = th
     for (let i = 0; i < this.numPages; i++) {
-      const canvas = document.createElement('canvas')
-      canvas.width = tw
-      canvas.height = th
       try { await this._view.renderSlide(i, canvas) } catch { /* skip this slide */ }
       if (gen !== this._gen || !this._view) return  // a newer doc loaded / destroyed
 
+      // Use an <img> (not the canvas): max-width/height:auto scales an <img>
+      // correctly to the sidebar width, whereas a <canvas> keeps its height.
+      const img = document.createElement('img')
+      img.src = canvas.toDataURL('image/png')
       const wrap = document.createElement('div')
       wrap.className = 'thumb'
       wrap.dataset.thumbPage = i + 1
       const lbl = document.createElement('div')
       lbl.className = 'thumb-label'
       lbl.textContent = i + 1
-      wrap.append(canvas, lbl)
+      wrap.append(img, lbl)
       wrap.addEventListener('click', () => this.viewer?.goToPage(i + 1))
       box.appendChild(wrap)
     }
