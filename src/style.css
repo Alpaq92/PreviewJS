@@ -147,7 +147,7 @@ html, body {
 
 #pageNumber {
   width: 48px;
-  height: 17px;
+  height: 21px;
   padding: 0 5px;
   background: #636363;
   border: 1px solid #3a3a3a;
@@ -156,6 +156,8 @@ html, body {
   text-align: center;
   font-size: 13px;
   -moz-appearance: textfield;
+  position: relative;
+  top: 2px;
 }
 #pageNumber::-webkit-inner-spin-button,
 #pageNumber::-webkit-outer-spin-button { -webkit-appearance: none; }
