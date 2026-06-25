@@ -1,6 +1,6 @@
 # ReaderJS — Universal Document Viewer
 
-A browser-based document viewer that renders **PDF, ODF, RTF, DOC, and DOCX** files natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
+A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, and Markdown** files natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
 
 To give it a try without installing anything, visit the [live demo](https://alpaq92.github.io/ReaderJS/).
 
@@ -17,6 +17,7 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 | Rich Text Format | `.rtf` | RTF.js |
 | Legacy Word 97–2003 | `.doc` | JSDoc |
 | Word Open XML | `.docx` | mammoth.js |
+| Markdown | `.md` `.markdown` | marked |
 
 ## Features
 
@@ -45,6 +46,7 @@ ReaderJS is built on these open-source libraries:
 | **[RTF.js](https://github.com/tbluemel/rtf.js)** | tbluemel | RTF document rendering, including EMFJS and WMFJS for Windows metafile graphics |
 | **[JSZip](https://github.com/Stuk/jszip)** | Stuk | ODF / ZIP container reading |
 | **[jQuery](https://github.com/jquery/jquery)** | OpenJS Foundation | DOM utility required internally by RTF.js |
+| **[marked](https://github.com/markedjs/marked)** | Christopher Jeffrey et al. | Markdown → HTML parsing and rendering |
 | **[Vite](https://github.com/vitejs/vite)** | Evan You / Vite contributors | Build tooling and development server |
 
 ### Submodules (reference / bundled)
@@ -56,6 +58,7 @@ ReaderJS is built on these open-source libraries:
 | [dolanmiu/docx](https://github.com/dolanmiu/docx) | dolanmiu | Reference |
 | [webodf/WebODF](https://github.com/webodf/WebODF) | webodf | Reference |
 | [tbluemel/rtf.js](https://github.com/tbluemel/rtf.js) | tbluemel | Reference |
+| [markedjs/marked](https://github.com/markedjs/marked) | Christopher Jeffrey et al. | Reference |
 
 ## Gallery
 
