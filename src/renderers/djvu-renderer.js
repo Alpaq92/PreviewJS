@@ -46,13 +46,16 @@ export class DjVuRenderer extends BaseRenderer {
 
   // Plain text of the DjVu for the compare view — the worker returns word zones
   // ({xmin,ymin,xmax,ymax,str}) per page; group them into lines by baseline.
+  // Returns the document text with a form-feed (\f) between pages, so the
+  // compare view can diff page-by-page.
   async extractText(buffer) {
     this._spawnWorker()
     try {
       const meta = await this._call('open', { buffer })
-      const lines = []
+      const pages = []
       for (let i = 0; i < (meta.pageCount || 1); i++) {
         const { words } = await this._call('text', { index: i })
+        const lines = []
         let line = [], lineY = null
         for (const w of (words || [])) {
           const h = (w.ymax - w.ymin) || 10
@@ -60,8 +63,9 @@ export class DjVuRenderer extends BaseRenderer {
           line.push(w.str); lineY = w.ymin
         }
         if (line.length) lines.push(line.join(' '))
+        pages.push(lines.join('\n'))
       }
-      return lines.join('\n')
+      return pages.join('\f')
     } finally {
       this._worker?.terminate()
       this._worker = null

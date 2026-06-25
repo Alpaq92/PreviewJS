@@ -1,0 +1,61 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 6 0 R >>
+endobj
+5 0 obj
+<< /Length 189 >>
+stream
+BT
+/F1 14 Tf
+16 TL
+72 720 Td
+(Project Aurora Manual) Tj
+T* (Version 2.4.0) Tj
+T* (Released June 24, 2026.) Tj
+T* () Tj
+T* (Chapter 1: Setup) Tj
+T* (Install the package and the embed.) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Length 129 >>
+stream
+BT
+/F1 14 Tf
+16 TL
+72 720 Td
+(Chapter 2: Usage) Tj
+T* (Run the start command.) Tj
+T* () Tj
+T* (Added page-by-page compare.) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000000373 00000 n 
+0000000613 00000 n 
+0000000793 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+863
+%%EOF
