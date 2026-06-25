@@ -45,6 +45,53 @@ const EXT_MAP = {
   fb2: 'epub', fbz: 'epub',
 }
 
+// Formats whose rendered output is text/HTML we can diff. The rest (pdf, djvu,
+// comic, image, pptx, epub) are canvas/reflowable → not text-comparable.
+const DIFFABLE = new Set(['txt', 'md', 'docx', 'rtf', 'odf', 'doc', 'code', 'csv', 'xlsx'])
+
+// Tags that imply a line break when flattening rich HTML to comparable text.
+const BLOCK_TAGS = new Set(['P','DIV','LI','H1','H2','H3','H4','H5','H6','TR','TABLE',
+  'BLOCKQUOTE','PRE','HR','SECTION','ARTICLE','UL','OL','DD','DT','FIGURE','FIGCAPTION'])
+
+// Flatten an element to text, inserting newlines at block boundaries (plain
+// textContent would collapse every paragraph onto one line).
+function blockText(root) {
+  let out = ''
+  const walk = node => {
+    for (const child of node.childNodes) {
+      if (child.nodeType === 3) out += child.nodeValue
+      else if (child.nodeType === 1) {
+        if (child.tagName === 'BR') { out += '\n'; continue }
+        walk(child)
+        if (BLOCK_TAGS.has(child.tagName)) out += '\n'
+      }
+    }
+  }
+  walk(root)
+  return out
+}
+
+// Rows of `.data-table` / xlsx sheets → tab-separated lines (so diffLines aligns
+// per row and the word diff aligns per cell).
+function tableText(page) {
+  const out = []
+  page.querySelectorAll('.sheet-title, table').forEach(node => {
+    if (node.tagName === 'H3') out.push('# ' + node.textContent)
+    else for (const tr of node.querySelectorAll('tr'))
+      out.push([...tr.children].map(c => c.textContent.replace(/\t/g, ' ')).join('\t'))
+  })
+  return out.join('\n')
+}
+
+// A diffable text representation of a freshly-rendered `.doc-page`.
+function extractRendered(host, format) {
+  const page = host.querySelector('.doc-page') || host
+  if (format === 'txt')  return (page.querySelector('.txt-content') || page).textContent
+  if (format === 'code') return (page.querySelector('pre code') || page).textContent
+  if (format === 'csv' || format === 'xlsx') return tableText(page)
+  return blockText(page).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
+}
+
 export class DocumentViewer {
   constructor() {
     this._rendererCache    = new Map()   // format → renderer instance (built once, reused)
@@ -100,6 +147,21 @@ export class DocumentViewer {
       dz.addEventListener('click', e => {
         if (e.target.tagName !== 'LABEL') fileInput.click()
       })
+
+      // Compare two files: pick A, then B, then diff (demo affordance; the
+      // embed passes versions + blame programmatically via compare()).
+      const cmpBtn = document.getElementById('compareBtn')
+      const cmpA = document.getElementById('compareA')
+      const cmpB = document.getElementById('compareB')
+      if (cmpBtn && cmpA && cmpB) {
+        let fileA = null
+        cmpBtn.addEventListener('click', () => { fileA = null; cmpA.click() })
+        cmpA.addEventListener('change', e => { fileA = e.target.files?.[0]; e.target.value = ''; if (fileA) cmpB.click() })
+        cmpB.addEventListener('change', e => {
+          const fileB = e.target.files?.[0]; e.target.value = ''
+          if (fileA && fileB) this.compare(fileA, fileA.name, fileB, fileB.name)
+        })
+      }
     }
 
     // Navigation
@@ -178,6 +240,7 @@ export class DocumentViewer {
       const renderer = await this._getRenderer(format)
       this.currentFileName = name   // used by foliate for format hinting
 
+      this._clearCompare()
       this.activeRenderer?.destroy()
       this.activeRenderer = renderer
 
@@ -208,6 +271,78 @@ export class DocumentViewer {
     } finally {
       this._setLoading(false)
     }
+  }
+
+  /* ── Compare two versions ────────────────────────────────────────────── */
+  // Render a version's bytes with a FRESH renderer into a detached node and
+  // extract a diffable text representation — never touches the live viewer.
+  async _extractText(buffer, name) {
+    const ext = (name || '').split('.').pop().toLowerCase()
+    const format = EXT_MAP[ext]
+    if (!format || !DIFFABLE.has(format)) {
+      const err = new Error('unsupported-compare')
+      err.code = 'unsupported-compare'; err.format = format || ext
+      throw err
+    }
+    const renderer = await RENDERER_LOADERS[format]()   // fresh, not the cached singleton
+    const host = document.createElement('div')          // detached — off the live DOM
+    try {
+      await renderer.load(buffer, host, { currentFileName: name })
+      return { text: extractRendered(host, format), format }
+    } finally {
+      renderer.destroy?.()
+    }
+  }
+
+  // Compare two document versions. `opts`: { blame: { [newLineNo]: {...} }, mode }.
+  async compare(srcA, nameA, srcB, nameB, opts = {}) {
+    this._setLoading(true)
+    this._hideDropzone()
+    try {
+      const toBuf = s => (s instanceof ArrayBuffer ? s : s.arrayBuffer())
+      const [bufA, bufB] = await Promise.all([toBuf(srcA), toBuf(srcB)])
+      const [a, b] = await Promise.all([this._extractText(bufA, nameA), this._extractText(bufB, nameB)])
+
+      this._clearCompare()
+      this.activeRenderer?.destroy()
+      this.activeRenderer = null
+
+      const container = document.getElementById('docContainer')
+      container.innerHTML = ''
+      document.getElementById('thumbsContent').innerHTML = ''
+
+      const page = document.createElement('div')
+      page.className = 'diff-page'
+      container.appendChild(page)
+
+      const { renderCompare } = await import('./diff-view.js')
+      this._compareCtl = renderCompare(page, {
+        leftText: a.text, rightText: b.text,
+        blame: opts.blame || {}, mode: opts.mode || 'side-by-side',
+      })
+
+      this.numPages = 1; this.currentPage = 1
+      this.updatePageInfo()
+      const badge = document.getElementById('formatBadge')
+      badge.textContent = t('compare.badge')
+      badge.className = 'badge-compare'
+      badge.classList.remove('hidden')
+      document.title = `${nameA} ↔ ${nameB} — ReaderJS`
+    } catch (err) {
+      if (err.code === 'unsupported-compare') {
+        this._showError(t('compare.unsupported', { format: String(err.format || '').toUpperCase() }))
+      } else {
+        console.error('[ReaderJS] compare error:', err)
+        this._showError(t('err.couldNotOpen', { name: `${nameA} ↔ ${nameB}`, msg: err.message }))
+      }
+    } finally {
+      this._setLoading(false)
+    }
+  }
+
+  _clearCompare() {
+    this._compareCtl?.destroy()
+    this._compareCtl = null
   }
 
   /* ── Page navigation ─────────────────────────────────────────────────── */

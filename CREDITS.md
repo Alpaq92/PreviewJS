@@ -20,6 +20,7 @@ dependencies** in anything that ships.
 | [SheetJS](https://sheetjs.com/) (`xlsx`) | Apache-2.0 | XLSX/XLS spreadsheets |
 | [Papa Parse](https://www.papaparse.com/) | MIT | CSV/TSV |
 | [highlight.js](https://highlightjs.org/) | BSD-3-Clause | source-code highlighting |
+| [jsdiff](https://github.com/kpdecker/jsdiff) (`diff`) | BSD-3-Clause | text diff engine for the compare view |
 | [marked](https://github.com/markedjs/marked) | MIT | Markdown |
 | [JSZip](https://github.com/Stuk/jszip) | MIT (dual MIT/GPLv3 — MIT taken) | ODF/CBZ ZIP containers |
 | [libarchive.js](https://github.com/nika-begiashvili/libarchivejs) | MIT (bundled libarchive = BSD) | CBR/CBT (RAR/TAR) via WASM |

@@ -32,6 +32,7 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 
 - PDF.js-inspired UI — sidebar thumbnails, page navigation, zoom, print
 - Drag & drop or browse to open files
+- Compare two versions of a text document (side-by-side / unified / inline) with pinnable, blame-aware tooltips
 - Client-side only — documents are never uploaded or transmitted
 - Multilingual UI — auto-detects your browser language with a manual switcher (English, Polish, Spanish, French, German, Portuguese, Chinese, Japanese, Russian)
 

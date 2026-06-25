@@ -77,10 +77,40 @@ Pass `name` whenever the URL has no usable extension (e.g. `/raw/123`).
 | `name` | required | filename whose extension selects the renderer |
 | `mime` | optional | passed through (dispatch is by extension) |
 
-`instance`: `{ load(blobOrBuffer, name, mime?), setLang(code), destroy(), iframe }`.
+`instance`: `{ load(blobOrBuffer, name, mime?), compare(a, b, opts?), setLang(code), destroy(), iframe }`.
 
 Bytes are sent to the iframe as a **structured-clone copy** (your `ArrayBuffer`
 is not neutered). The host↔iframe handshake is origin-checked and same-origin only.
+
+## Comparing two versions (with blame)
+
+For text documents (txt, md, source code, csv/tsv, docx, rtf, odf, doc, xlsx) you
+can show a diff of two versions, with each change carrying **blame** the host
+supplies:
+
+```js
+const inst = ReaderJS.mount(container, {})
+inst.compare(
+  { source: blobA, name: 'report-v1.md' },   // source: Blob or ArrayBuffer
+  { source: blobB, name: 'report-v2.md' },
+  {
+    mode: 'side-by-side',                     // 'side-by-side' (default) | 'unified' | 'inline'
+    blame: {                                  // keyed by NEW-side (right) line number
+      12: { author: 'Ana Ruiz', date: '2026-06-20', commit: '9f3a1c2', message: 'bump version' },
+      18: { author: 'Tom Lee',  date: '2026-06-22', commit: 'b7e4d80', message: 'add dark mode' },
+    },
+  },
+)
+```
+
+Or compare straight from `mount`: `ReaderJS.mount(el, { compare: { a, b, blame, mode } })`.
+
+- The viewer offers a toggle between **side-by-side / unified / inline**.
+- Hover a changed line → a tooltip shows its blame; click 📌 to **pin** it open (multiple pins allowed).
+- **`blame` must be plain data** — functions don't survive `postMessage`. Keys are
+  the line numbers of the *new* version (matching `git blame`).
+- Canvas/reflowable formats (pdf, djvu, images, comics, pptx, epub) aren't text-comparable
+  and show an "unavailable" message.
 
 ## Content-Security-Policy
 

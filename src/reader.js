@@ -32,6 +32,7 @@ function boot() {
     const m = e.data
     if (!m || typeof m !== 'object') return
     if (m.type === 'readerjs:load') viewer.loadBytes(m.buffer, m.name, m.mime)
+    else if (m.type === 'readerjs:compare') viewer.compare(m.bufferA, m.nameA, m.bufferB, m.nameB, { blame: m.blame, mode: m.mode })
     else if (m.type === 'readerjs:setLang' && m.lang) setLang(m.lang)
   })
 

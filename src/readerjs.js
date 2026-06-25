@@ -6,6 +6,13 @@
 //   inst.load(blob, 'next.pdf')   // swap the document
 //   inst.destroy()
 //
+// Compare two versions of a text document (txt/md/code/csv/xlsx/docx/rtf/odf/doc):
+//   inst.compare({ source: blobA, name: 'a.md' }, { source: blobB, name: 'b.md' },
+//                { blame: { 12: { author, date, commit, message } }, mode: 'side-by-side' })
+// or at mount: ReaderJS.mount(el, { compare: { a, b, blame, mode } }).
+// `blame` is keyed by new-side line number and MUST be plain data — functions do
+// not survive postMessage. Each change's tooltip shows the blame for its line.
+//
 // mount() embeds reader.html (this file's sibling) in a same-origin iframe and
 // hands it the document over postMessage (or via ?src). The iframe isolates the
 // viewer's full-page CSS, JS globals and CSP surface from the host page.
@@ -52,25 +59,29 @@ export function mount(container, opts = {}) {
   }
   window.addEventListener('message', onMessage)
 
-  // Send bytes to the frame. Structured-clone COPY (no transfer) so the host's
-  // own ArrayBuffer is not neutered.
+  // Structured-clone COPY (no transfer) so the host's own ArrayBuffer isn't neutered.
+  const toBuf = source => Promise.resolve(source instanceof Blob ? source.arrayBuffer() : source)
+  const send = payload => { if (ready) postToFrame(payload); else queued = payload }
+
   function load(source, name, mime) {
-    Promise.resolve(source instanceof Blob ? source.arrayBuffer() : source).then(buffer => {
-      const payload = { type: 'readerjs:load', buffer, name, mime }
-      if (ready) postToFrame(payload)
-      else queued = payload
-    })
+    toBuf(source).then(buffer => send({ type: 'readerjs:load', buffer, name, mime }))
+  }
+
+  // Compare two versions; a/b are { source: Blob|ArrayBuffer, name }.
+  function compare(a, b, cmp = {}) {
+    Promise.all([toBuf(a.source), toBuf(b.source)]).then(([bufferA, bufferB]) =>
+      send({ type: 'readerjs:compare', bufferA, nameA: a.name, bufferB, nameB: b.name, blame: cmp.blame, mode: cmp.mode }))
   }
 
   container.appendChild(iframe)
 
-  // Bytes mode queues the document; URL mode is served by reader.html via ?src.
-  if (!opts.src && (opts.blob || opts.arrayBuffer)) {
-    load(opts.blob || opts.arrayBuffer, opts.name, opts.mime)
-  }
+  // Auto-fire whichever mode was requested at mount.
+  if (opts.compare) compare(opts.compare.a, opts.compare.b, opts.compare)
+  else if (!opts.src && (opts.blob || opts.arrayBuffer)) load(opts.blob || opts.arrayBuffer, opts.name, opts.mime)
 
   return {
     load,                                  // swap document at runtime (bytes mode)
+    compare,                               // compare two versions (with optional blame)
     setLang(lang) { if (ready) postToFrame({ type: 'readerjs:setLang', lang }) },
     iframe,
     destroy() {
