@@ -4,7 +4,7 @@ A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, Markdow
 
 To give it a try without installing anything, visit the [live demo](https://alpaq92.github.io/ReaderJS/).
 
-![ReaderJS — universal document viewer](gallery/hero.svg)
+![ReaderJS — universal document viewer](gallery/preview.png)
 
 ---
 
