@@ -450,14 +450,17 @@ html, body {
 .diff-page {
   background: #2b2d31;
   color: #d6d9de;
-  width: min(96%, 1100px);
+  width: 100%;
+  min-height: 100%;
   border: 1px solid #1a1b1e;
   border-radius: 6px;
   box-shadow: 0 2px 12px rgba(0,0,0,.5);
-  flex-shrink: 0;
-  align-self: center;
-  margin: 6px 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
 }
+/* compare mode: stretch docContainer so the diff fills the viewer area */
+#docContainer.is-compare { align-self: stretch; padding-bottom: 0; }
 .diff-mode-toggle {
   display: flex;
   gap: 4px;
@@ -482,7 +485,7 @@ html, body {
 .diff-mode-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
 .diff-mode-btn.active { background: #2b2d31; color: #90caf9; border-color: #90caf9; font-weight: 600; }
 
-.diff-body { position: relative; }
+.diff-body { position: relative; flex: 1 1 auto; }
 .diff-rows { font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; }
 
 /* side-by-side: aligned two-column grid */

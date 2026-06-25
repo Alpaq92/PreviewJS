@@ -317,6 +317,7 @@ export class DocumentViewer {
       const page = document.createElement('div')
       page.className = 'diff-page'
       container.appendChild(page)
+      container.classList.add('is-compare')   // let the diff fill the viewer area
 
       const { renderCompare } = await import('./diff-view.js')
       this._compareCtl = renderCompare(page, {
@@ -346,6 +347,7 @@ export class DocumentViewer {
   _clearCompare() {
     this._compareCtl?.destroy()
     this._compareCtl = null
+    document.getElementById('docContainer')?.classList.remove('is-compare')
   }
 
   /* ── Page navigation ─────────────────────────────────────────────────── */
