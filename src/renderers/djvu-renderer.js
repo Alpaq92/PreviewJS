@@ -46,8 +46,7 @@ export class DjVuRenderer extends BaseRenderer {
 
   // Plain text of the DjVu for the compare view — the worker returns word zones
   // ({xmin,ymin,xmax,ymax,str}) per page; group them into lines by baseline.
-  // Returns the document text with a form-feed (\f) between pages, so the
-  // compare view can diff page-by-page.
+  // Returns an array of per-page text, so the compare view can diff page-by-page.
   async extractText(buffer) {
     this._spawnWorker()
     try {
@@ -65,7 +64,7 @@ export class DjVuRenderer extends BaseRenderer {
         if (line.length) lines.push(line.join(' '))
         pages.push(lines.join('\n'))
       }
-      return pages.join('\f')
+      return pages
     } finally {
       this._worker?.terminate()
       this._worker = null

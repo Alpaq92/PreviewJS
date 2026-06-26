@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "chart.js": "^4.5.1",
-    "dejaview": "github:Alpaq92/dejaview#4eb5b581464f4814835c7ad55a2d511cca20b40b",
+    "dejaview": "github:Alpaq92/dejaview#ae7aed28a7e9f1ef9658d421471ffb66336ada09",
     "diff": "^9.0.0",
     "exifr": "^7.1.3",
     "foliate-js": "github:johnfactotum/foliate-js#78914aef4466eb960965702401634c2cb348e9b1",

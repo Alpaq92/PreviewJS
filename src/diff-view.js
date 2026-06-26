@@ -105,8 +105,7 @@ function cell(row, side) {
   const ln = document.createElement('span'); ln.className = 'diff-lineno'
   const txt = document.createElement('span'); txt.className = 'diff-text'
   const lineNo = side === 'left' ? row.leftLineNo : row.rightLineNo
-  if (lineNo == null) { c.classList.add('diff-blank') }
-  else {
+  if (lineNo != null) {   // a blank side stays empty — sideClass() already gave it .diff-cell.blank
     ln.textContent = lineNo
     fillText(txt, side === 'left' ? row.leftText : row.rightText, row.type === 'mod' ? wordParts(row) : null, side)
     if (row.type !== 'equal') markChange(c, row)
@@ -174,7 +173,6 @@ export function renderCompare(target, { pages = [], blame = {}, mode = 'side-by-
   const rowsFor = i => { if (!rowsCache.has(i)) rowsCache.set(i, buildRows(pages[i].leftText, pages[i].rightText)); return rowsCache.get(i) }
   let pageIdx = 0
   target.innerHTML = ''
-  target.classList.add('diff-view')
 
   // The view-mode switcher is a dropdown in the host's top toolbar (the app and
   // the embed both wire it to setMode); the diff itself is just the body.
@@ -263,12 +261,10 @@ export function renderCompare(target, { pages = [], blame = {}, mode = 'side-by-
   return {
     setMode,
     setPage,
-    pageCount: pages.length,
     destroy() {
       pins.splice(0).forEach(p => p.remove())
       tip.remove()
       target.innerHTML = ''
-      target.classList.remove('diff-view')
     },
   }
 }

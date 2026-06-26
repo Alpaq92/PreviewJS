@@ -3,6 +3,7 @@ import { BaseRenderer } from './base-renderer.js'
 // module also registers the <foliate-view> custom element. foliate-js (MIT)
 // isn't on npm, so it's a pinned git dependency in package.json.
 import { makeBook } from 'foliate-js/view.js'
+import { flattenBlocks } from '../dom-text.js'
 
 // Reflowable books are styled by injecting CSS into each section document.
 // "Zoom" maps to font-size since EPUB/MOBI have no fixed page geometry.
@@ -11,26 +12,13 @@ const bookCSS = (scale) => `
   p, li, blockquote, dd { line-height: 1.5; }
 `
 
-// Flatten a section document to text, breaking at block boundaries.
+// Flatten a section document to text, breaking at block boundaries (skipping
+// SCRIPT/STYLE, whose text isn't content).
 const BLOCK = new Set(['P','DIV','LI','H1','H2','H3','H4','H5','H6','BLOCKQUOTE',
   'PRE','TR','SECTION','ARTICLE','FIGCAPTION','DD','DT'])
-function docText(root) {
-  let out = ''
-  const walk = node => {
-    for (const child of node.childNodes) {
-      if (child.nodeType === 3) out += child.nodeValue
-      else if (child.nodeType === 1) {
-        const tag = child.tagName?.toUpperCase()
-        if (tag === 'BR') { out += '\n'; continue }
-        if (tag === 'SCRIPT' || tag === 'STYLE') continue
-        walk(child)
-        if (BLOCK.has(tag)) out += '\n'
-      }
-    }
-  }
-  walk(root)
-  return out.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n')
-}
+const SKIP = new Set(['SCRIPT', 'STYLE'])
+const docText = root =>
+  flattenBlocks(root, BLOCK, SKIP).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n')
 
 /**
  * Renders reflowable e-books — EPUB, MOBI and KF8/AZW3 — via foliate-js's
@@ -129,7 +117,7 @@ export class EPUBRenderer extends BaseRenderer {
         const text = body ? docText(body).trim() : ''
         if (text) parts.push(text)
       }
-      return parts.join('\n\n')
+      return [parts.join('\n\n')]   // reflowable books compare as a single page
     } finally {
       book?.destroy?.()
     }

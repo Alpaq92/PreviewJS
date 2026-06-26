@@ -175,8 +175,7 @@ export class PDFRenderer extends BaseRenderer {
   // Plain-text of the PDF for the compare view — pulled from pdf.js's text
   // layer (no canvas render). Lines are split on pdf.js's hasEOL flag and on a
   // baseline (y) change, so reflowed runs land on the right line.
-  // Returns the document text with a form-feed (\f) between pages, so the
-  // compare view can diff page-by-page.
+  // Returns an array of per-page text, so the compare view can diff page-by-page.
   async extractText(buffer) {
     const task = pdfjsLib.getDocument({ data: new Uint8Array(buffer) })
     const doc = await task.promise
@@ -199,7 +198,7 @@ export class PDFRenderer extends BaseRenderer {
     } finally {
       await task.destroy()   // pdf.js 6: destroy the loading task, not the document proxy
     }
-    return pages.join('\f')
+    return pages
   }
 
   destroy() {

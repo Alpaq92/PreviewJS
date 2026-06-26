@@ -1,4 +1,5 @@
 import { t, applyTranslations, setLang, getLang } from './i18n.js'
+import { flattenBlocks } from './dom-text.js'
 
 // Each format's renderer module is imported on demand, so opening a document
 // only pulls that format's engine (pdf.js, mammoth, foliate, libarchive, …).
@@ -53,24 +54,6 @@ const DIFFABLE = new Set(['txt', 'md', 'docx', 'rtf', 'odf', 'doc', 'code', 'csv
 const BLOCK_TAGS = new Set(['P','DIV','LI','H1','H2','H3','H4','H5','H6','TR','TABLE',
   'BLOCKQUOTE','PRE','HR','SECTION','ARTICLE','UL','OL','DD','DT','FIGURE','FIGCAPTION'])
 
-// Flatten an element to text, inserting newlines at block boundaries (plain
-// textContent would collapse every paragraph onto one line).
-function blockText(root) {
-  let out = ''
-  const walk = node => {
-    for (const child of node.childNodes) {
-      if (child.nodeType === 3) out += child.nodeValue
-      else if (child.nodeType === 1) {
-        if (child.tagName === 'BR') { out += '\n'; continue }
-        walk(child)
-        if (BLOCK_TAGS.has(child.tagName)) out += '\n'
-      }
-    }
-  }
-  walk(root)
-  return out
-}
-
 // Rows of `.data-table` / xlsx sheets → tab-separated lines (so diffLines aligns
 // per row and the word diff aligns per cell).
 function tableText(page) {
@@ -89,7 +72,7 @@ function extractRendered(host, format) {
   if (format === 'txt')  return (page.querySelector('.txt-content') || page).textContent
   if (format === 'code') return (page.querySelector('pre code') || page).textContent
   if (format === 'csv' || format === 'xlsx') return tableText(page)
-  return blockText(page).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
+  return flattenBlocks(page, BLOCK_TAGS).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
 }
 
 export class DocumentViewer {
@@ -286,12 +269,12 @@ export class DocumentViewer {
       // Renderers that read text straight from their engine (e.g. PDF's text
       // layer) skip the DOM render entirely.
       if (typeof renderer.extractText === 'function') {
-        return { text: await renderer.extractText(buffer, name), format }
+        return { pages: await renderer.extractText(buffer, name), format }   // string[] — one per page
       }
       if (!DIFFABLE.has(format)) throw unsupported()
       const host = document.createElement('div')        // detached — off the live DOM
       await renderer.load(buffer, host, { currentFileName: name })
-      return { text: extractRendered(host, format), format }
+      return { pages: [extractRendered(host, format)], format }   // continuous formats: one page
     } finally {
       renderer.destroy?.()
     }
@@ -319,9 +302,8 @@ export class DocumentViewer {
       container.appendChild(page)
       document.getElementById('mainContainer').classList.add('is-compare')   // full-bleed diff + flat toolbar
 
-      // \f from the extractors separates document pages → compare page-by-page.
-      const aPages = (a.text ?? '').split('\f')
-      const bPages = (b.text ?? '').split('\f')
+      // Each extractor returns its pages (string[]); line them up and diff per page.
+      const aPages = a.pages, bPages = b.pages
       const pageCount = Math.max(aPages.length, bPages.length)
       const pages = []
       for (let i = 0; i < pageCount; i++) pages.push({ leftText: aPages[i] ?? '', rightText: bPages[i] ?? '' })
