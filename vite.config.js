@@ -17,6 +17,16 @@ const stubFoliatePdf = {
 
 export default defineConfig({
   plugins: [stubFoliatePdf],
+  resolve: {
+    alias: {
+      // CHMate only declares its reader (".") in package.json exports, which
+      // blocks a bare `chmate/render` import. Alias the browser renderer
+      // (renderTopic/BlobCache) straight to its file so the CHM renderer can
+      // reuse CHMate's hardened sanitizer instead of reimplementing it.
+      // TODO: drop this alias once CHMate adds "./render" to its package exports.
+      'chmate/render': fileURLToPath(new URL('./node_modules/chmate/src/render.js', import.meta.url)),
+    },
+  },
   optimizeDeps: {
     include: ['pdfjs-dist', 'mammoth'],
     // Don't esbuild-prebundle foliate-js: it's source-style ESM and its
