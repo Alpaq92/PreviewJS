@@ -385,6 +385,7 @@ html, body {
 .tag-csv   { background: #7cb342; color: #fff; }
 .tag-code  { background: #546e7a; color: #fff; }
 .tag-djvu  { background: #3949ab; color: #fff; }
+.tag-mhtml { background: #ff8f00; color: #fff; }
 
 .powered-by {
   margin-top: 22px;
