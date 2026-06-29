@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "chart.js": "^4.5.1",
+    "chmate": "github:Alpaq92/CHMate#86b26bb8c33255de89db4fa68e610b9ac7cc286a",
     "dejaview": "github:Alpaq92/dejaview#ae7aed28a7e9f1ef9658d421471ffb66336ada09",
     "diff": "^9.0.0",
     "exifr": "^7.1.3",

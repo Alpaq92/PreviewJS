@@ -21,6 +21,7 @@ const RENDERER_LOADERS = {
   code:  () => import('./renderers/code-renderer.js').then(m => new m.CodeRenderer()),
   djvu:  () => import('./renderers/djvu-renderer.js').then(m => new m.DjVuRenderer()),
   mhtml: () => import('./renderers/mhtml-renderer.js').then(m => new m.MHTMLRenderer()),
+  chm:   () => import('./renderers/chm-renderer.js').then(m => new m.CHMRenderer()),
 }
 
 const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html','htm',
@@ -35,6 +36,7 @@ const EXT_MAP = {
   docx: 'docx',
   doc: 'doc',
   mht: 'mhtml', mhtml: 'mhtml',
+  chm: 'chm',
   pptx: 'pptx',
   xlsx: 'xlsx', xls: 'xlsx', xlsm: 'xlsx', xlsb: 'xlsx',
   csv: 'csv', tsv: 'csv',
@@ -175,6 +177,19 @@ export class DocumentViewer {
     document.getElementById('sidebarToolbar')?.addEventListener('dblclick', () => {
       document.getElementById('outerContainer').classList.remove('sidebar-open')
     })
+
+    // Re-fit the page whenever the viewer area resizes — toggling the sidebar or
+    // resizing the window changes the available width, and the fit-to-width /
+    // -height / -page modes must track it (otherwise the page stays at its old
+    // scale and clips). Manual zoom levels are left untouched.
+    if ('ResizeObserver' in window) {
+      const FIT_OPTIONS = new Set(['auto', 'page-fit', 'page-width', 'page-height'])
+      new ResizeObserver(() => {
+        if (!this.activeRenderer) return
+        const opt = document.getElementById('scaleSelect').value
+        if (FIT_OPTIONS.has(opt)) this._applyScaleOption(opt)
+      }).observe(document.getElementById('viewerContainer'))
+    }
 
     // Error bar
     document.getElementById('errorClose').addEventListener('click', () => {

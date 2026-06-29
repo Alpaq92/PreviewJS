@@ -26,6 +26,7 @@ dependencies** in anything that ships.
 | [libarchive.js](https://github.com/nika-begiashvili/libarchivejs) | MIT (bundled libarchive = BSD) | CBR/CBT (RAR/TAR) via WASM |
 | [foliate-js](https://github.com/johnfactotum/foliate-js) | MIT | EPUB/MOBI/AZW3/FB2 |
 | [mhtml-to-html](https://github.com/gildas-lormeau/mhtml-to-html) | MIT | MHTML/`.mht` web archives → HTML |
+| [CHMate](https://github.com/Alpaq92/CHMate) | MIT | CHM (`.chm`) reading + rendering — pure-JS ITSF container + LZX, no WASM |
 | [UTIF.js](https://github.com/photopea/UTIF.js) | MIT | TIFF images |
 | [exifr](https://github.com/MikeKovarik/exifr) | MIT | EXIF/GPS metadata |
 | [Vite](https://github.com/vitejs/vite) | MIT | build tooling |

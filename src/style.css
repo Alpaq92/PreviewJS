@@ -253,6 +253,7 @@ html, body {
 #formatBadge.badge-code  { background: #546e7a; color: #fff; }
 #formatBadge.badge-djvu  { background: #3949ab; color: #fff; }
 #formatBadge.badge-mhtml { background: #8e24aa; color: #fff; }
+#formatBadge.badge-chm   { background: #006064; color: #fff; }
 
 /* File input — hidden, triggered by label */
 #fileInput { display: none; }
@@ -387,6 +388,7 @@ html, body {
 .tag-code  { background: #546e7a; color: #fff; }
 .tag-djvu  { background: #3949ab; color: #fff; }
 .tag-mhtml { background: #8e24aa; color: #fff; }
+.tag-chm   { background: #006064; color: #fff; }
 
 .powered-by {
   margin-top: 22px;
@@ -637,9 +639,17 @@ html, body {
 .doc-page .docbox p { margin: 0; }
 .doc-page h3.sec { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #888; margin: 22px 0 8px; padding-top: 14px; border-top: 1px solid #e0e0e0; }
 
-/* ── MHTML web-archive page (sandboxed iframe) ──────────────────────────── */
-.doc-page.mhtml-page { padding: 0; overflow: visible; height: auto; }
-.mhtml-frame { display: block; width: 100%; border: 0; }
+/* ── MHTML / CHM: untrusted full-document HTML in a sandboxed iframe ─────── */
+.doc-page.mhtml-page, .doc-page.chm-page { padding: 0; overflow: visible; height: auto; }
+.mhtml-frame, .chm-frame { display: block; width: 100%; border: 0; }
+
+/* CHM table-of-contents sidebar */
+.chm-toc { padding: 6px 0; font-size: 13px; }
+.chm-toc-children { margin-left: 11px; }
+.chm-toc-row { padding: 3px 10px; color: #c8c8d0; border-radius: 4px; line-height: 1.35; }
+.chm-toc-row.chm-toc-link { cursor: pointer; }
+.chm-toc-row.chm-toc-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+.chm-toc-row.chm-toc-active { background: rgba(120,160,255,.22); color: #fff; }
 
 /* ── Utilities ──────────────────────────────────────────────────────────── */
 .hidden { display: none !important; }
