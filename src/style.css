@@ -252,6 +252,7 @@ html, body {
 #formatBadge.badge-csv   { background: #7cb342; color: #fff; }
 #formatBadge.badge-code  { background: #546e7a; color: #fff; }
 #formatBadge.badge-djvu  { background: #3949ab; color: #fff; }
+#formatBadge.badge-mhtml { background: #8e24aa; color: #fff; }
 
 /* File input — hidden, triggered by label */
 #fileInput { display: none; }
@@ -385,7 +386,7 @@ html, body {
 .tag-csv   { background: #7cb342; color: #fff; }
 .tag-code  { background: #546e7a; color: #fff; }
 .tag-djvu  { background: #3949ab; color: #fff; }
-.tag-mhtml { background: #ff8f00; color: #fff; }
+.tag-mhtml { background: #8e24aa; color: #fff; }
 
 .powered-by {
   margin-top: 22px;
