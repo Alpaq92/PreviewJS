@@ -1,6 +1,6 @@
 # ReaderJS — Universal Document Viewer
 
-A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, Markdown, plain text, images, comic-book archives, e-books (EPUB/MOBI), web archives (MHTML), Compiled HTML Help (CHM), and PostScript/EPS** natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
+A single browser-based document viewer that opens and renders PDF, ODF, RTF, DOC, DOCX, Markdown, plain text, images, comic-book archives, e-books (EPUB/MOBI), web archives (MHTML), Compiled HTML Help (CHM), and PostScript/EPS natively in the browser — no server, no upload, no conversion, and nothing to install. Everything runs client-side, so your files never leave your machine.
 
 To give it a try without installing anything, visit the [live demo](https://alpaq92.github.io/ReaderJS/).
 
