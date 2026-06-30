@@ -22,6 +22,7 @@ const RENDERER_LOADERS = {
   djvu:  () => import('./renderers/djvu-renderer.js').then(m => new m.DjVuRenderer()),
   mhtml: () => import('./renderers/mhtml-renderer.js').then(m => new m.MHTMLRenderer()),
   chm:   () => import('./renderers/chm-renderer.js').then(m => new m.CHMRenderer()),
+  ps:    () => import('./renderers/postscript-renderer.js').then(m => new m.PostScriptRenderer()),
 }
 
 const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html','htm',
@@ -30,6 +31,7 @@ const CODE_EXTS = ['js','mjs','cjs','jsx','ts','tsx','json','jsonc','xml','html'
 
 const EXT_MAP = {
   pdf: 'pdf',
+  ps: 'ps', eps: 'ps', epsf: 'ps',
   djvu: 'djvu', djv: 'djvu',
   odt: 'odf', ods: 'odf', odp: 'odf', odg: 'odf', odm: 'odf', odf: 'odf',
   rtf: 'rtf',

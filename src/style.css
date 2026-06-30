@@ -254,6 +254,7 @@ html, body {
 #formatBadge.badge-djvu  { background: #3949ab; color: #fff; }
 #formatBadge.badge-mhtml { background: #8e24aa; color: #fff; }
 #formatBadge.badge-chm   { background: #006064; color: #fff; }
+#formatBadge.badge-ps    { background: #880e4f; color: #fff; }
 
 /* File input — hidden, triggered by label */
 #fileInput { display: none; }
@@ -389,6 +390,7 @@ html, body {
 .tag-djvu  { background: #3949ab; color: #fff; }
 .tag-mhtml { background: #8e24aa; color: #fff; }
 .tag-chm   { background: #006064; color: #fff; }
+.tag-ps    { background: #880e4f; color: #fff; }
 
 .powered-by {
   margin-top: 22px;
@@ -418,6 +420,15 @@ html, body {
   line-height: 0;
 }
 .pdf-page canvas { display: block; }
+
+/* ── PostScript / EPS pages (Riposte) ──────────────────────────────────── */
+.postscript-page {
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  flex-shrink: 0;
+  line-height: 0;
+}
+.postscript-page canvas { display: block; }
 
 /* ── DjVu pages (DejaView) ─────────────────────────────────────────────── */
 .djvu-page {

@@ -148,5 +148,5 @@ theme + inline `style` attributes). No `'unsafe-eval'` is required.
 - **Formats:** PDF, DjVu, ODF (ODT/ODS/ODP/ODG), RTF, DOC, DOCX, PPTX,
   XLSX/XLS, CSV/TSV, Markdown, source code, images (+TIFF/EXIF),
   comic archives (CBZ/CBR/CBT), e-books (EPUB/MOBI/AZW3/FB2),
-  web archives (MHTML), Compiled HTML Help (CHM), plain text.
+  web archives (MHTML), Compiled HTML Help (CHM), PostScript/EPS, plain text.
 - See [CREDITS.md](CREDITS.md) — every bundled engine is permissively licensed.

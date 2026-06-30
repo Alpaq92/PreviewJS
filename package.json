@@ -22,17 +22,18 @@
     "highlight.js": "^11.11.1",
     "jszip": "^3.10.1",
     "libarchive.js": "^2.0.2",
-    "mammoth": "^1.8.0",
+    "mammoth": "^1.12.0",
     "marked": "^18.0.5",
     "mhtml-to-html": "^2.0.1",
     "papaparse": "^5.5.4",
-    "pdfjs-dist": "^6.0.227",
+    "pdfjs-dist": "^6.1.200",
     "pptxviewjs": "^1.1.9",
+    "riposte": "github:Alpaq92/Riposte#307ef7dfd9c5e8c0c07a840874e013cf94a85ada",
     "rtf.js": "^3.0.9",
     "utif": "^3.1.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
-    "vite": "^8.1.0"
+    "vite": "^8.1.2"
   }
 }

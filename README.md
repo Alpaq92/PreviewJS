@@ -1,6 +1,6 @@
 # ReaderJS — Universal Document Viewer
 
-A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, Markdown, plain text, images, comic-book archives, e-books (EPUB/MOBI), web archives (MHTML), and Compiled HTML Help (CHM)** natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
+A browser-based document viewer that renders **PDF, ODF, RTF, DOC, DOCX, Markdown, plain text, images, comic-book archives, e-books (EPUB/MOBI), web archives (MHTML), Compiled HTML Help (CHM), and PostScript/EPS** natively in the browser — no server, no upload, no conversion. Everything runs client-side; your files never leave your machine.
 
 To give it a try without installing anything, visit the [live demo](https://alpaq92.github.io/ReaderJS/).
 
@@ -13,6 +13,7 @@ To give it a try without installing anything, visit the [live demo](https://alpa
 | Format | Extension(s) | Engine |
 |--------|-------------|--------|
 | PDF | `.pdf` | PDF.js (Mozilla) |
+| PostScript / EPS | `.ps` `.eps` `.epsf` | Riposte |
 | DjVu | `.djvu` `.djv` | DejaView |
 | ODF — Writer, Calc, Impress | `.odt` `.ods` `.odp` `.odg` | JSZip + DOMParser |
 | Rich Text Format | `.rtf` | RTF.js |
@@ -83,6 +84,7 @@ ReaderJS is built on these open-source libraries:
 | **[foliate-js](https://github.com/johnfactotum/foliate-js)** | John Factotum | EPUB / MOBI / KF8 (AZW3) / FB2 parsing and paginated rendering |
 | **[mhtml-to-html](https://github.com/gildas-lormeau/mhtml-to-html)** | Gildas Lormeau | MHTML (`.mht` / `.mhtml`) web archives → one self-contained HTML document |
 | **[CHMate](https://github.com/Alpaq92/CHMate)** | Alpaq92 | Pure-JS Microsoft Compiled HTML Help (`.chm`) reader — ITSF container + LZX decompression + sanitizing topic renderer, no WASM |
+| **[Riposte](https://github.com/Alpaq92/Riposte)** | Alpaq92 | Pure-JS PostScript / EPS interpreter and renderer — rasterizes each page to `<canvas>`, zero runtime deps, no WASM |
 | **[UTIF.js](https://github.com/photopea/UTIF.js)** | Photopea | TIFF image decoding |
 | **[exifr](https://github.com/MikeKovarik/exifr)** | Mike Kovarik | EXIF / GPS metadata parsing for images |
 | **[Vite](https://github.com/vitejs/vite)** | Evan You / Vite contributors | Build tooling and development server |
@@ -90,11 +92,12 @@ ReaderJS is built on these open-source libraries:
 | **[Open-Color](https://github.com/yeun/open-color)** | Heeyeun Jeong | Colour palette for the compare / diff view |
 
 Every library above is a normal **npm dependency** — `npm install` is all you
-need, no git submodules. The three that aren't published to npm
+need, no git submodules. The four that aren't published to npm
 ([foliate-js](https://github.com/johnfactotum/foliate-js) for e-books,
-[DejaView](https://github.com/Alpaq92/dejaview) for DjVu, and
-[CHMate](https://github.com/Alpaq92/CHMate) for CHM) are pinned to commits
-as git dependencies in `package.json`. Every engine is permissively licensed
+[DejaView](https://github.com/Alpaq92/dejaview) for DjVu,
+[CHMate](https://github.com/Alpaq92/CHMate) for CHM, and
+[Riposte](https://github.com/Alpaq92/Riposte) for PostScript) are pinned to
+commits as git dependencies in `package.json`. Every engine is permissively licensed
 (MIT / BSD / Apache-2.0 / 0BSD).
 
 ## Gallery
